@@ -1,7 +1,8 @@
-import math
+# Importa a classe que representa os itens adicionados ao carrinho.
+from model_objects import ProductQuantity
 
-from model_objects import ProductQuantity, SpecialOfferType, Discount
-
+# Importa a fábrica responsável por selecionar as estratégias de promoção.
+from promotions.promotion_factory import PromotionFactory
 
 class ShoppingCart:
 
@@ -27,42 +28,34 @@ class ShoppingCart:
         else:
             self._product_quantities[product] = quantity
 
+
     def handle_offers(self, receipt, offers, catalog):
-        for p in self._product_quantities.keys():
-            quantity = self._product_quantities[p]
-            if p in offers.keys():
-                offer = offers[p]
-                unit_price = catalog.unit_price(p)
-                quantity_as_int = int(quantity)
-                discount = None
-                x = 1
-                if offer.offer_type == SpecialOfferType.THREE_FOR_TWO:
-                    x = 3
+        # Percorre os produtos na mesma ordem em que foram acumulados no carrinho.
+        for product in self._product_quantities.keys():
 
-                elif offer.offer_type == SpecialOfferType.TWO_FOR_AMOUNT:
-                    x = 2
-                    if quantity_as_int >= 2:
-                        total = offer.argument * (quantity_as_int / x) + quantity_as_int % 2 * unit_price
-                        discount_n = unit_price * quantity - total
-                        discount = Discount(p, "2 for " + str(offer.argument), -discount_n)
+            # Recupera a quantidade total daquele produto.
+            quantity = self._product_quantities[product]
 
-                if offer.offer_type == SpecialOfferType.FIVE_FOR_AMOUNT:
-                    x = 5
+            # Verifica se existe uma promoção cadastrada para o produto.
+            if product in offers.keys():
 
-                number_of_x = math.floor(quantity_as_int / x)
-                if offer.offer_type == SpecialOfferType.THREE_FOR_TWO and quantity_as_int > 2:
-                    discount_amount = quantity * unit_price - (
-                                (number_of_x * 2 * unit_price) + quantity_as_int % 3 * unit_price)
-                    discount = Discount(p, "3 for 2", -discount_amount)
+                # Recupera a oferta associada ao produto.
+                offer = offers[product]
 
-                if offer.offer_type == SpecialOfferType.TEN_PERCENT_DISCOUNT:
-                    discount = Discount(p, str(offer.argument) + "% off",
-                                        -quantity * unit_price * offer.argument / 100.0)
+                # Consulta o preço unitário no catálogo.
+                unit_price = catalog.unit_price(product)
 
-                if offer.offer_type == SpecialOfferType.FIVE_FOR_AMOUNT and quantity_as_int >= 5:
-                    discount_total = unit_price * quantity - (
-                                offer.argument * number_of_x + quantity_as_int % 5 * unit_price)
-                    discount = Discount(p, str(x) + " for " + str(offer.argument), -discount_total)
+                # Solicita à fábrica a estratégia correspondente à promoção.
+                strategy = PromotionFactory.create_strategy(offer.offer_type)
 
-                if discount:
+                # Delega o cálculo do desconto à estratégia selecionada.
+                discount = strategy.calculate(
+                    product,
+                    quantity,
+                    unit_price,
+                    offer.argument
+                )
+
+                # Adiciona o desconto somente quando a estratégia retorna um.
+                if discount is not None:
                     receipt.add_discount(discount)
