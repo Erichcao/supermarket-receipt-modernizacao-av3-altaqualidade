@@ -1,175 +1,207 @@
 # GUIA DE CONTINUIDADE — MODERNIZAÇÃO DO SUPERMARKET RECEIPT
 
-## 1. Objetivo do trabalho
+## 1. Objetivo do projeto
 
 Modernizar incrementalmente o sistema legado Supermarket Receipt, utilizando boas práticas de Engenharia de Software, refatoração, padrões de projeto, testes automatizados e análise de segurança.
 
-O objetivo não é reescrever o sistema do zero. É compreender o funcionamento original, preservar suas regras de negócio e melhorar sua estrutura de forma segura.
+O objetivo não é reescrever o sistema do zero, mas compreender seu funcionamento original, preservar suas regras de negócio e melhorar sua estrutura de forma segura.
 
-A implementação deve partir do código original do repositório oficial, na versão Python com pytest (`python_pytest`).
+A implementação foi baseada no código original do repositório oficial, utilizando a versão Python com pytest (`python_pytest`).
 
-## 2. Regras obrigatórias
+Repositório do projeto:
+https://github.com/Erichcao/supermarket-receipt-modernizacao-av3-altaqualidade
 
-1. Não substituir o código original por uma solução pronta.
-2. Não utilizar testes preexistentes como substitutos dos testes de caracterização desenvolvidos pelo grupo.
-3. Executar e registrar o comportamento original antes de modificar o código.
-4. Criar testes automatizados com pytest.
-5. Preservar as promoções e regras de negócio existentes.
-6. Aplicar pelo menos dois padrões de projeto, justificando sua utilização.
-7. Implementar a promoção de combos sem conceder descontos indevidos.
+## 2. Requisitos e regras obrigatórias
+
+As principais diretrizes da modernização foram:
+
+1. Preservar o código e as regras de negócio originais.
+2. Desenvolver testes de caracterização para registrar o comportamento anterior à refatoração.
+3. Utilizar pytest para os testes automatizados.
+4. Preservar as promoções existentes e seus contratos públicos.
+5. Aplicar pelo menos dois padrões de projeto, justificando sua utilização.
+6. Implementar a promoção de combos com desconto de 10%.
+7. Impedir descontos duplicados sobre as mesmas unidades.
 8. Executar Bandit, pip-audit e Safety antes e depois das alterações.
-9. Registrar evidências reais de execução, testes e auditorias.
+9. Registrar evidências reais de testes e auditorias.
 10. Manter o projeto executável e documentado.
 
-## 3. Nova regra de negócio: combos promocionais
+## 3. Funcionalidades implementadas
 
-Um combo é formado por uma quantidade definida de produtos.
+### 3.1. Promoções existentes
 
-Quando todos os produtos necessários para formar um combo forem comprados, os itens participantes daquele combo recebem 10% de desconto.
+Foram preservadas as regras das promoções originais:
 
-Exemplos:
+- Desconto percentual.
+- Três unidades pelo preço de duas.
+- Duas unidades por valor fixo.
+- Cinco unidades por valor fixo.
 
-- 1 escova + 1 pasta: os dois produtos recebem 10% de desconto.
-- 2 escovas + 1 pasta: somente uma escova e uma pasta recebem desconto.
-- 2 escovas + 2 pastas: os quatro produtos recebem desconto, formando dois combos.
-- 1 escova sem pasta: nenhum desconto de combo.
+A modernização buscou manter o comportamento legado protegido pelos testes de caracterização.
 
-O sistema deve evitar:
-- Descontar produtos que não completam um combo.
-- Descontar duas vezes o mesmo item.
-- Alterar indevidamente as promoções antigas.
+### 3.2. Promoção de combos
 
-O grupo deve descobrir como as ofertas atuais funcionam antes de definir como os combos vão coexistir com elas.
+Foi implementada uma nova promoção que concede 10% de desconto sobre os produtos que formam um combo completo.
 
-## 4. Ordem obrigatória de execução
+Regras implementadas:
 
-### Etapa 1 — Conhecer o sistema
-- Ler o README original.
-- Identificar carrinho, produtos, ofertas, descontos e recibos.
-- Entender as classes e suas responsabilidades.
-- Registrar a estrutura do projeto.
+- Cada oferta define os produtos e as quantidades necessárias para formar o combo.
+- O desconto é aplicado somente quando todos os produtos e quantidades exigidos estão disponíveis.
+- É possível formar múltiplos combos quando existem quantidades suficientes.
+- Combos incompletos não recebem desconto.
+- Uma mesma unidade não pode participar de mais de um combo.
+- Unidades utilizadas nos combos não recebem simultaneamente promoções individuais incompatíveis.
+- Produtos excedentes permanecem elegíveis às promoções individuais, respeitando suas regras originais.
+- Produtos vendidos por peso não participam dos combos.
+- Percentuais de desconto inválidos são rejeitados no cadastro das ofertas.
 
-### Etapa 2 — Execução inicial
-- Preparar o ambiente Python.
-- Instalar as dependências.
-- Executar os testes disponíveis.
-- Executar o sistema original, se houver fluxo de execução.
-- Registrar comandos, versões, resultados e erros.
+A política adotada é a **exclusividade por unidade**, evitando a acumulação indevida de descontos.
 
-### Etapa 3 — Diagnóstico técnico
-Identificar problemas reais no código, como:
-- Condicionais extensas.
-- Código duplicado.
-- Alto acoplamento.
-- Responsabilidades misturadas.
-- Dificuldade de testar ou adicionar novas promoções.
+## 4. Padrões de projeto aplicados
 
-Todo problema apontado deve estar relacionado a um arquivo, trecho ou comportamento concreto.
+Foram implementados dois padrões principais:
 
-### Etapa 4 — Requisitos
-Documentar requisitos funcionais (RF) e não funcionais (RNF), incluindo:
-- Promoções antigas.
-- Cálculo de descontos.
-- Geração de recibos.
-- Formação de combos.
-- Tratamento de quantidades incompletas e excedentes.
+**Strategy**
 
-Cada requisito precisa ter um critério de aceitação verificável.
+Encapsula as regras de cálculo das promoções em estratégias independentes, permitindo organizar e testar cada tipo de oferta separadamente.
 
-### Etapa 5 — Plano de contingência
-Definir:
-- Ordem segura das alterações.
-- Riscos de regressão.
-- Estratégia de testes.
-- Critérios para aceitar cada mudança.
-- Como retornar à versão anterior se algo quebrar.
-- Interfaces e comportamentos que precisam ser preservados.
+**Factory Method**
 
-### Etapa 6 — Testes de caracterização
-Criar testes que registrem o comportamento original antes da refatoração.
+Centraliza a criação e a seleção das estratégias de promoção por meio da classe `PromotionFactory`.
 
-Cobrir:
-- Carrinho sem promoção.
-- Promoções existentes.
-- Descontos.
-- Quantidades e limites.
-- Cálculo e conteúdo dos recibos.
-- Combinações relevantes de ofertas.
+Os padrões estão documentados em `docs/padroes_projeto.md`.
 
-### Etapa 7 — Segurança inicial
-Executar:
-- Bandit.
-- pip-audit.
-- Safety.
+## 5. Testes automatizados
 
-Registrar versões, comandos, resultados e limitações do ambiente.
+O projeto conta com 59 testes automatizados aprovados na validação registrada:
 
-### Etapa 8 — Refatoração
-Refatorar em pequenas etapas, executando os testes após cada alteração.
+- 46 testes relacionados ao comportamento legado e à caracterização.
+- 13 testes relacionados à implementação dos combos.
 
-Aplicar pelo menos dois padrões de projeto adequados ao código encontrado. Strategy e Factory Method são possibilidades, mas a escolha deve ser justificada pelo problema real.
+Comando utilizado:
 
-Documentar:
-- Problema original.
-- Solução adotada.
-- Classes envolvidas.
-- Antes e depois.
-- Testes relacionados.
+```bash
+python -m pytest -v
+```
 
-### Etapa 9 — Implementação dos combos
-Implementar a nova promoção de 10%, respeitando as regras de formação de combos e a compatibilidade com as promoções antigas.
+Os testes verificam o comportamento original, as promoções existentes e as novas regras de formação e aplicação dos combos.
 
-### Etapa 10 — Testes de regressão
-Testar:
-- Combo completo.
-- Combo incompleto.
-- Mais de um combo.
-- Produtos excedentes.
-- Coexistência com promoções antigas.
-- Ausência de desconto duplicado.
+Antes de novas alterações, a suíte completa deverá ser executada novamente.
 
-### Etapa 11 — Segurança final
-Executar novamente Bandit, pip-audit e Safety.
+## 6. Auditorias de segurança
 
-Comparar os resultados antes e depois, explicando os alertas encontrados e as correções realizadas ou justificadamente não realizadas.
+Foram utilizadas três ferramentas:
 
-### Etapa 12 — Entrega
-Preparar:
-- Código final.
-- Testes automatizados.
-- README.
-- Diagnóstico.
-- Requisitos.
-- Plano de contingência.
-- Documentação dos padrões.
-- Relatório de segurança.
-- Evidências.
-- Apresentação de 10 a 15 minutos.
+- **Bandit:** análise estática de possíveis problemas de segurança no código Python.
+- **pip-audit:** identificação de vulnerabilidades conhecidas nas dependências analisadas.
+- **Safety:** verificação de alertas relacionados a dependências e políticas de segurança.
 
-## 5. Orientações para outras IAs
+Resultados registrados:
 
-Qualquer IA que ajudar no projeto deve:
+| Ferramenta | Resultado final |
+|---|---|
+| Bandit | 0 problemas identificados |
+| pip-audit | Nenhuma vulnerabilidade conhecida encontrada nas dependências analisadas |
+| Safety | 14 alertas encontrados, todos ignorados por políticas de classificação |
 
-1. Ler este guia e o PDF original da atividade antes de propor alterações.
+Os alertas do Safety não devem ser interpretados como vulnerabilidades corrigidas. Eles foram identificados e classificados como ignorados pelas políticas aplicadas.
+
+Os ambientes utilizados nas análises inicial e final não eram idênticos. Essa limitação está detalhada em `docs/seguranca_antes_depois.md`.
+
+As evidências estão armazenadas na pasta `evidencias/`.
+
+## 7. Estrutura do projeto
+
+A organização principal inclui:
+
+```text
+supermarket-receipt-modernizacao-av3-altaqualidade/
+│
+├── src/
+│   ├── promotions/
+│   ├── catalog.py
+│   ├── model_objects.py
+│   ├── receipt.py
+│   ├── shopping_cart.py
+│   └── teller.py
+│
+├── tests/
+│   ├── test_supermarket.py
+│   ├── test_legacy_behavior.py
+│   ├── test_bundle_discount.py
+│   ├── fake_catalog.py
+│   └── receipt_printer.py
+│
+├── docs/
+│   ├── diagnostico_tecnico.md
+│   ├── requisitos.md
+│   ├── plano_contingencia.md
+│   ├── padroes_projeto.md
+│   └── seguranca_antes_depois.md
+│
+├── evidencias/
+│
+├── README.md
+├── GUIA_CONTINUIDADE.md
+└── requirements.txt
+```
+
+## 8. Como executar o projeto
+
+Com o ambiente virtual ativado e as dependências instaladas, execute os testes:
+
+```bash
+python -m pytest -v
+```
+
+Para executar o sistema, utilize o fluxo de execução disponibilizado pelo projeto original e consulte o README para orientações adicionais.
+
+## 9. Organização do Git
+
+O fluxo de branches utilizado pelo grupo é:
+
+- `main`: branch principal, destinada à versão estável.
+- `develop`: branch de integração das funcionalidades.
+- `feature/*`: branches destinadas ao desenvolvimento de funcionalidades específicas.
+- `docs/*`: branches destinadas a alterações de documentação.
+
+As alterações devem ser desenvolvidas em branches próprias e integradas por meio de Pull Requests, após revisão e validação.
+
+Os commits devem utilizar mensagens claras e seguir o padrão Conventional Commits, por exemplo:
+
+```text
+feat: adiciona nova funcionalidade
+fix: corrige regra de negócio
+test: adiciona testes automatizados
+docs: atualiza documentação
+refactor: reorganiza implementação
+```
+
+## 10. Orientações para continuidade
+
+Qualquer pessoa ou ferramenta de IA que dê continuidade ao projeto deverá:
+
+1. Ler este guia e a documentação relacionada antes de propor alterações.
 2. Inspecionar o código real antes de recomendar refatorações.
 3. Não inventar nomes de classes, métodos, arquivos ou resultados de execução.
 4. Não presumir que os testes passaram sem executar ou receber evidências.
 5. Não modificar regras de negócio existentes sem justificativa.
-6. Não implementar padrões de projeto artificialmente apenas para cumprir quantidade.
+6. Não implementar padrões de projeto artificialmente.
 7. Explicar cada alteração, indicando os arquivos afetados e como testar.
 8. Preferir mudanças pequenas, rastreáveis e reversíveis.
 9. Atualizar a documentação e os testes junto com as alterações.
 10. Sinalizar claramente o que ainda não foi realizado.
 
-Se faltar informação, pedir o arquivo, código, log ou resultado necessário antes de assumir.
+## 11. Situação e atividades de finalização
 
-## 6. Critério de conclusão
+A implementação principal, a documentação técnica, os testes automatizados e as auditorias de segurança já foram realizados e registrados.
 
-O trabalho só deve ser considerado concluído quando:
-- O sistema final executar corretamente.
-- Os testes de comportamento legado e os novos testes passarem.
-- Os combos respeitarem todos os casos previstos.
-- Dois ou mais padrões estiverem implementados e justificados.
-- As três ferramentas de segurança tiverem sido executadas antes e depois.
-- A documentação e as evidências estiverem completas.
-- O grupo conseguir explicar tecnicamente as decisões na apresentação.
+As atividades de finalização incluem:
+
+- Revisar a documentação e as evidências.
+- Executar e registrar a análise de cobertura dos testes.
+- Conferir a integridade final do repositório.
+- Integrar a documentação final à branch de desenvolvimento por Pull Request.
+- Preparar a apresentação de 10 a 15 minutos.
+
+A entrega deverá permitir que o grupo explique as decisões técnicas, os padrões utilizados, as regras de negócio, os testes e os resultados das análises de segurança.
