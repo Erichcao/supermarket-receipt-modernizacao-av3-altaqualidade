@@ -20,7 +20,7 @@ Também estabelece medidas para reduzir riscos relacionados à implementação d
 | Alterar contratos públicos durante a refatoração | Falhas em componentes que dependem das interfaces existentes | Preservar assinaturas, propriedades e comportamentos públicos protegidos pelos testes. |
 | Refatorar muitas classes simultaneamente | Dificuldade para localizar erros e identificar a origem de regressões | Realizar alterações pequenas, incrementais e isoladas por funcionalidade. |
 | Introduzir falhas durante a refatoração | Sistema deixa de funcionar corretamente | Executar os testes automatizados após cada mudança relevante. |
-| Introduzir vulnerabilidades ou dependências inseguras | Riscos de segurança para a aplicação | Executar Bandit, pip-audit e Safety antes e depois das alterações. |
+| Introduzir vulnerabilidades ou dependências inseguras | Riscos de segurança para a aplicação | Executar Bandit, pip-audit e Safety antes e depois das alterações, documentando os resultados e os alertas identificados. |
 | Perder alterações ou comprometer a versão estável | Retrabalho e perda de progresso | Utilizar Git, manter branches organizadas e realizar commits pequenos e identificáveis. |
 | Introduzir conflitos durante a integração das branches | Perda de alterações ou inconsistências no código | Integrar funcionalidades por meio de Pull Requests e revisar os conflitos antes da conclusão do merge. |
 
@@ -45,6 +45,8 @@ Falhas relacionadas à promoção de combos deverão ser investigadas consideran
 - Produtos excedentes.
 - Aplicação dos descontos individuais nas unidades não utilizadas nos combos.
 - Possibilidade de descontos duplicados.
+- Participação indevida de produtos vendidos por peso.
+- Validação dos percentuais de desconto cadastrados.
 - Correção do valor final e da apresentação do recibo.
 
 ## 4. Estratégia de rollback
@@ -89,6 +91,8 @@ As seguintes condições deverão permanecer verdadeiras durante e após a moder
 - Uma mesma unidade não pode participar de mais de um combo na mesma compra.
 - Uma mesma unidade não pode receber simultaneamente o desconto de combo e outra promoção incompatível.
 - Unidades excedentes devem continuar elegíveis às promoções antigas, respeitando as regras originais dessas ofertas.
+- Produtos vendidos por peso não podem participar dos combos.
+- Os percentuais de desconto cadastrados nas ofertas devem respeitar as validações estabelecidas.
 - A aplicação dos descontos não pode contabilizar repetidamente uma mesma unidade.
 - A implementação dos combos não deve alterar indevidamente os cálculos e descontos das funcionalidades existentes.
 
@@ -105,6 +109,8 @@ Após qualquer correção, integração relevante ou rollback, deverão ser real
 - Conferir o tratamento de produtos excedentes.
 - Validar a regra de exclusividade por unidade.
 - Verificar a interação entre as promoções antigas e a nova promoção de combos.
+- Verificar a restrição de produtos vendidos por peso.
+- Validar a rejeição de percentuais de desconto inválidos.
 - Executar as ferramentas de segurança quando houver alterações relevantes no código ou nas dependências.
 - Registrar os resultados das verificações nas evidências do projeto.
 

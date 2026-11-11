@@ -266,3 +266,20 @@ class TestBundleDiscount:
 
         # Confere o total após os descontos dos dois combos.
         assert receipt.total_price() == pytest.approx(5.913)
+
+    def test_nao_aplica_desconto_em_combo_sem_produtos(
+        self, teller
+    ):
+        # Cadastra uma oferta sem produtos.
+        teller.add_bundle_offer(
+            products=[],
+            discount_percentage=10
+        )
+
+        # Realiza uma compra sem produtos.
+        cart = ShoppingCart()
+        receipt = teller.checks_out_articles_from(cart)
+
+        # Uma oferta vazia não deve gerar desconto.
+        assert receipt.discounts == []
+        assert receipt.total_price() == 0

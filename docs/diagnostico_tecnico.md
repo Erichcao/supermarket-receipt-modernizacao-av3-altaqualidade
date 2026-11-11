@@ -247,21 +247,27 @@ Além disso, as particularidades identificadas no comportamento legado exigem at
 
 A ampliação dos testes de caracterização reduz esse risco, fornecendo uma referência automatizada para verificar a preservação do comportamento original.
 
-## 6. Recomendações iniciais
+## 6. Recomendações identificadas no diagnóstico inicial
+
+Com base nos problemas encontrados no sistema legado, foram estabelecidas as seguintes recomendações para orientar a modernização:
 
 1. Manter e ampliar os testes automatizados antes de modificar o comportamento existente.
 2. Separar as responsabilidades de armazenamento do carrinho e cálculo das promoções.
-3. Avaliar padrões de projeto que permitam organizar e encapsular as diferentes políticas de desconto.
+3. Aplicar padrões de projeto que permitam organizar e encapsular as diferentes políticas de desconto.
 4. Preservar as regras antigas e os contratos públicos durante a refatoração.
 5. Implementar os combos como uma funcionalidade independente e testável, considerando a participação de múltiplos produtos.
-6. Definir e documentar como os descontos de combos coexistirão com as promoções antigas, evitando descontos duplicados ou indevidos.
-7. Validar os resultados com testes de regressão, incluindo os cenários de caracterização já existentes.
-8. Verificar se a formatação do recibo e os cálculos originais permanecem compatíveis após as alterações.
+6. Definir como os descontos de combos coexistirão com as promoções antigas, evitando descontos duplicados ou indevidos.
+7. Validar os resultados com testes de regressão, incluindo os cenários de caracterização.
+8. Verificar a compatibilidade dos cálculos e da formatação dos recibos após as alterações.
 9. Realizar novas análises de segurança após a modernização e comparar os resultados com a avaliação inicial.
 
-## 7. Limitações desta análise
+Essas recomendações serviram como referência para as decisões de implementação e validação realizadas nas etapas seguintes do projeto.
 
-Este diagnóstico foi elaborado a partir da análise dos arquivos:
+## 7. Limitações do diagnóstico
+
+Este diagnóstico representa a análise técnica do sistema antes da refatoração. Seu objetivo foi compreender a estrutura original, identificar problemas de manutenção e registrar comportamentos que deveriam ser preservados.
+
+As constatações foram elaboradas a partir da análise dos seguintes arquivos:
 
 - `src/catalog.py`;
 - `src/model_objects.py`;
@@ -273,10 +279,24 @@ Este diagnóstico foi elaborado a partir da análise dos arquivos:
 - `tests/fake_catalog.py`;
 - `tests/receipt_printer.py`.
 
-Também foram considerados os resultados da execução da suíte de testes automatizados, que apresentou 46 testes aprovados no ambiente analisado.
+Também foram considerados os resultados da execução dos testes automatizados disponíveis naquela etapa, que totalizavam 46 testes aprovados: um teste original e 45 testes de caracterização.
 
-As constatações representam o comportamento observado antes da refatoração.
+As constatações representam o comportamento observado antes da refatoração. Portanto, este documento não deve ser interpretado como uma descrição integral da arquitetura final do sistema.
 
-Ainda não foram realizadas alterações no código de produção, implementação da promoção de combos ou auditorias de segurança posteriores à modernização.
+As alterações implementadas, os resultados dos testes de regressão e as auditorias posteriores estão registrados nos documentos e nas evidências correspondentes.
 
-As decisões de arquitetura e implementação deverão ser complementadas pela análise dos requisitos, dos padrões de projeto e dos testes de regressão.
+## 8. Relação com as etapas posteriores da modernização
+
+As recomendações deste diagnóstico orientaram as etapas seguintes do projeto.
+
+Durante a modernização, foram aplicadas as seguintes melhorias:
+
+- Separação das estratégias de promoção utilizando o padrão Strategy.
+- Centralização da criação das estratégias por meio do padrão Factory Method.
+- Implementação dos descontos de 10% para combos de produtos.
+- Definição da política de exclusividade por unidade para evitar descontos duplicados.
+- Ampliação da suíte de testes para validar o comportamento legado e as novas funcionalidades.
+
+A suíte completa passou a contar com 59 testes aprovados, incluindo os testes de caracterização e os testes específicos dos combos.
+
+As decisões de arquitetura estão detalhadas em `docs/padroes_projeto.md`, enquanto os resultados das auditorias estão documentados em `docs/seguranca_antes_depois.md` e na pasta `evidencias/`.
