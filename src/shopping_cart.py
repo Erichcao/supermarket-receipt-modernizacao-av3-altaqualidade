@@ -1,6 +1,11 @@
-import math
+# Importa a classe que representa os itens adicionados ao carrinho.
+from model_objects import ProductQuantity, ProductUnit
 
-from model_objects import ProductQuantity, SpecialOfferType, Discount
+# Importa a fábrica responsável por selecionar as estratégias individuais.
+from promotions.promotion_factory import PromotionFactory
+
+# Importa a estratégia responsável pelo cálculo dos combos.
+from promotions.bundle_discount import BundleDiscountStrategy
 
 
 class ShoppingCart:
@@ -22,47 +27,78 @@ class ShoppingCart:
 
     def add_item_quantity(self, product, quantity):
         self._items.append(ProductQuantity(product, quantity))
+
         if product in self._product_quantities.keys():
-            self._product_quantities[product] = self._product_quantities[product] + quantity
+            self._product_quantities[product] += quantity
         else:
             self._product_quantities[product] = quantity
 
-    def handle_offers(self, receipt, offers, catalog):
-        for p in self._product_quantities.keys():
-            quantity = self._product_quantities[p]
-            if p in offers.keys():
-                offer = offers[p]
-                unit_price = catalog.unit_price(p)
-                quantity_as_int = int(quantity)
-                discount = None
-                x = 1
-                if offer.offer_type == SpecialOfferType.THREE_FOR_TWO:
-                    x = 3
+    def handle_offers(self, receipt, offers, catalog, bundle_offers=None):
+        # Cria uma cópia das quantidades para controlar as unidades disponíveis.
+        available_quantities = self._product_quantities.copy()
 
-                elif offer.offer_type == SpecialOfferType.TWO_FOR_AMOUNT:
-                    x = 2
-                    if quantity_as_int >= 2:
-                        total = offer.argument * (quantity_as_int / x) + quantity_as_int % 2 * unit_price
-                        discount_n = unit_price * quantity - total
-                        discount = Discount(p, "2 for " + str(offer.argument), -discount_n)
+        # Utiliza uma lista vazia quando não existem combos cadastrados.
+        if bundle_offers is None:
+            bundle_offers = []
 
-                if offer.offer_type == SpecialOfferType.FIVE_FOR_AMOUNT:
-                    x = 5
+        # Cria a estratégia responsável pelo cálculo dos combos.
+        bundle_strategy = BundleDiscountStrategy()
 
-                number_of_x = math.floor(quantity_as_int / x)
-                if offer.offer_type == SpecialOfferType.THREE_FOR_TWO and quantity_as_int > 2:
-                    discount_amount = quantity * unit_price - (
-                                (number_of_x * 2 * unit_price) + quantity_as_int % 3 * unit_price)
-                    discount = Discount(p, "3 for 2", -discount_amount)
+        # Percorre os combos cadastrados.
+        for bundle_offer in bundle_offers:
 
-                if offer.offer_type == SpecialOfferType.TEN_PERCENT_DISCOUNT:
-                    discount = Discount(p, str(offer.argument) + "% off",
-                                        -quantity * unit_price * offer.argument / 100.0)
+            # Verifica se todos os produtos do combo são vendidos por unidade.
+            if any(
+                product.unit != ProductUnit.EACH
+                for product in bundle_offer.products
+            ):
+                continue
 
-                if offer.offer_type == SpecialOfferType.FIVE_FOR_AMOUNT and quantity_as_int >= 5:
-                    discount_total = unit_price * quantity - (
-                                offer.argument * number_of_x + quantity_as_int % 5 * unit_price)
-                    discount = Discount(p, str(x) + " for " + str(offer.argument), -discount_total)
+            # Calcula o desconto e as quantidades reservadas pelo combo.
+            discount, reserved_quantities = bundle_strategy.calculate(
+                bundle_offer,
+                available_quantities,
+                catalog
+            )
 
-                if discount:
+            # Registra o desconto quando existe um combo completo.
+            if discount is not None:
+                receipt.add_discount(discount)
+
+                # Retira as unidades utilizadas dos produtos disponíveis.
+                for product, quantity in reserved_quantities.items():
+                    available_quantities[product] -= quantity
+
+        # Percorre os produtos na mesma ordem em que foram acumulados.
+        for product in self._product_quantities.keys():
+
+            # Recupera somente a quantidade que não foi utilizada em combos.
+            quantity = available_quantities[product]
+
+            # Ignora produtos sem unidades disponíveis para outras promoções.
+            if quantity <= 0:
+                continue
+
+            # Verifica se existe uma promoção individual cadastrada.
+            if product in offers.keys():
+
+                # Recupera a oferta associada ao produto.
+                offer = offers[product]
+
+                # Consulta o preço unitário no catálogo.
+                unit_price = catalog.unit_price(product)
+
+                # Solicita à fábrica a estratégia correspondente à promoção.
+                strategy = PromotionFactory.create_strategy(offer.offer_type)
+
+                # Calcula o desconto sobre as unidades restantes.
+                discount = strategy.calculate(
+                    product,
+                    quantity,
+                    unit_price,
+                    offer.argument
+                )
+
+                # Adiciona o desconto somente quando a estratégia retorna um.
+                if discount is not None:
                     receipt.add_discount(discount)
