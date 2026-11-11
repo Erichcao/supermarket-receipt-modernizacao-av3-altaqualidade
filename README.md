@@ -50,19 +50,32 @@ As implementações estão organizadas no diretório `src/promotions/`.
 
 ## 4. Testes automatizados
 
-Foram desenvolvidos testes para preservar o comportamento legado e validar as novas funcionalidades.
+Foram desenvolvidos testes para preservar o comportamento legado e validar as novas funcionalidades e estruturas de modernização.
 
-Resultados registrados:
+Resultados da validação final:
 
 - 45 testes de caracterização, além do teste original.
-- 13 testes específicos para os descontos por combos.
-- 59 testes aprovados na execução completa da suíte.
+- 14 testes específicos para os descontos por combos.
+- 1 teste para validar a rejeição de tipos de promoção não suportados pela fábrica.
+- **61 testes aprovados** na execução completa da suíte.
+- **99% de cobertura de código**, com 633 das 636 instruções executadas.
+
+As instruções não cobertas correspondem a proteções de acesso ao banco de dados utilizadas no catálogo e à declaração do método abstrato da estratégia de promoção.
 
 Para executar os testes:
 
 ```bash
 python -m pytest -v
 ```
+
+Para verificar a cobertura:
+
+```bash
+python -m coverage run -m pytest
+python -m coverage report -m
+```
+
+O relatório de cobertura está disponível em `evidencias/cobertura_testes.txt`.
 
 ## 5. Auditorias de segurança
 
