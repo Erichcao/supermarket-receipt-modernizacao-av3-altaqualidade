@@ -1,174 +1,132 @@
-# Análise de Segurança — Antes e Depois da Modernização
+# Segurança: comparação antes e depois
 
-## 1. Objetivo
+**Projeto:** Supermarket Receipt – Modernização de Software
+**Disciplina:** Alta Qualidade de Software (SENAI CIMATEC)
+**Branch da última auditoria:** `fix/dependency-hygiene`
 
-Avaliar aspectos da segurança do sistema legado antes e depois da modernização, utilizando ferramentas de análise estática do código e verificação de vulnerabilidades conhecidas nas dependências Python.
+Este documento registra os resultados das três ferramentas de auditoria (Bandit, pip-audit e Safety) em três momentos, as correções aplicadas e as limitações de comparação.
 
-A análise busca identificar possíveis problemas, comparar os resultados das execuções e registrar os riscos que permaneceram.
+---
 
-## 2. Ferramentas utilizadas
+## 1. Resumo
 
-Foram utilizadas três ferramentas complementares:
+| Ferramenta | Antes (relatório inicial) | Intermediário | Final |
+|---|---|---|---|
+| Bandit | 133 linhas, 0 problemas | não executado | 291 linhas, 0 problemas, 0 arquivos ignorados |
+| pip-audit | Nenhuma vulnerabilidade conhecida | não executado | Nenhuma vulnerabilidade conhecida (versões fixadas) |
+| Safety | 80 dependências, 14 alertas, 14 ignorados | 29 dependências, 1 alerta, 1 ignorado | 29 dependências, 0 alertas, 0 correções sugeridas |
 
-- **Bandit:** identifica padrões potencialmente inseguros no código Python por meio de análise estática.
-- **pip-audit:** verifica vulnerabilidades conhecidas nas dependências Python declaradas.
-- **Safety:** identifica alertas de segurança relacionados às dependências e aplica políticas de classificação e ignorar alertas.
+**Conclusão curta:** as ferramentas não apontaram vulnerabilidades no código-fonte (`src`). Os alertas do Safety estavam em dependências e no ambiente de desenvolvimento, e foram tratados com fixação de versões, isolamento das ferramentas de auditoria e atualização do `pip`.
 
-Cada ferramenta possui um escopo específico. Portanto, seus resultados devem ser interpretados separadamente.
+---
 
-## 3. Análise inicial — Antes da modernização
+## 2. O que foi encontrado e o que foi feito
 
-A análise inicial foi realizada sobre a versão original do projeto.
+### 2.1. `pytest` sem versão fixada (1 alerta no relatório inicial)
 
-### 3.1 Bandit
+- **Alerta:** `SFTY-20260122-20373`, faixa afetada `<9.0.3`, política `unpinned-specification`.
+- **Causa:** o `requirements.txt` não fixava versões, o que permitia instalar uma versão afetada.
+- **Correção:** `requirements.txt` com versões exatas:
 
-Resultado registrado:
+```text
+approvaltests==20.0.1
+coverage==7.17.2
+pytest==9.2.0
+pytest-approvaltests==0.2.4
+```
 
-- Linhas de código analisadas: 133.
-- Problemas identificados: 0.
-- Arquivos ignorados: 0.
+- **Verificação:** no scan final, `pytest==9.2.0` aparece sem vulnerabilidades conhecidas, tanto no `requirements.txt` quanto no `.venv`.
 
-A ferramenta não identificou problemas de segurança no código analisado.
+### 2.2. `filelock` (13 alertas no relatório inicial)
 
-### 3.2 pip-audit
+- **Alertas:** 13 identificadores, versão 3.32.7, política `environment-dependency`.
+- **Causa:** o `filelock` não faz parte do `requirements.txt`. Ele entrou no ambiente virtual do projeto como dependência indireta quando o Safety foi instalado ali.
+- **Correção:** o `.venv` do projeto foi recriado apenas com o `requirements.txt`, e as ferramentas de auditoria (Bandit, pip-audit, Safety) passaram a rodar em um ambiente separado (`auditoria-venv`), fora do repositório.
+- **Verificação:** o `pip list` do `.venv` recriado não contém `filelock`, e os relatórios novos não o citam.
 
-Resultado registrado:
+### 2.3. `pip` desatualizado (1 alerta no scan intermediário)
 
-**No known vulnerabilities found.**
+- **Alerta:** `SFTY-20261020-17374`, `pip==26.2.1`, faixa afetada `>=19.1,<26.2.2`, ignorado pela política `environment-dependency`.
+- **Causa:** o `pip` é ferramenta do ambiente, não está no `requirements.txt`.
+- **Correção:** `python -m pip install --upgrade pip` no `.venv` do projeto, que passou para a versão 26.3.
+- **Verificação:** o scan final não lista mais nenhum alerta.
+- **Observação:** como o `pip` não está no `requirements.txt`, essa correção vale para o ambiente em que foi aplicada. O README orienta a atualizar o `pip` antes de instalar as dependências.
 
-Isso significa que a ferramenta não encontrou vulnerabilidades conhecidas nas dependências verificadas naquela execução.
+---
 
-### 3.3 Safety
+## 3. Detalhes por ferramenta (execução final)
 
-O relatório inicial identificou 14 alertas, todos ignorados pelas políticas aplicadas.
+### Bandit
 
-Os registros estavam relacionados a:
+- Escopo: diretório `src`.
+- Resultado: `No issues identified`, 291 linhas de código, 0 arquivos ignorados.
+- Interpretação: nenhum padrão inseguro foi sinalizado pelas regras da ferramenta. Isso não prova ausência total de falhas.
 
-- **pytest:** um alerta associado à especificação sem versão fixada, classificado pela política `unpinned-specification`.
-- **filelock:** 13 alertas associados à versão 3.32.7, classificados pela política `environment-dependency`.
+### pip-audit
 
-Os alertas ignorados permaneceram registrados no relatório, não significando que foram corrigidos ou eliminados.
+- Comando: `pip-audit -r requirements.txt -f columns`.
+- Resultado: `No known vulnerabilities found`.
+- Observação: a saída contém um aviso do módulo `venv` sobre o caminho da pasta temporária no Windows (nome curto e nome completo do mesmo diretório). O aviso não afeta o resultado.
+- Interpretação: nenhuma vulnerabilidade conhecida nas versões exatas declaradas.
 
-## 4. Análise final — Depois da modernização
+### Safety
 
-Após a refatoração e a implementação dos descontos por combos, as três ferramentas foram executadas novamente.
+- Versão da ferramenta: 3.8.1, política padrão (`Scan policy: None, using Safety CLI default policies`).
+- Escopo: `requirements.txt` e `.venv\pyvenv.cfg` do projeto.
+- Resultado: 29 dependências testadas, 0 problemas de segurança, 0 correções sugeridas.
+- Interpretação: nenhuma das 29 dependências analisadas teve alerta na base do Safety na data da execução.
 
-### 4.1 Bandit
+---
 
-Resultado registrado:
+## 4. Evidências
 
-- Linhas de código analisadas: 291.
-- Problemas identificados: 0.
-- Arquivos ignorados: 0.
+Arquivos na pasta `evidencias/`:
 
-A ferramenta não identificou problemas de segurança no código analisado.
+| Arquivo | Conteúdo |
+|---|---|
+| `bandit_antes.txt` / `bandit_depois.txt` | Execuções do relatório inicial e da modernização |
+| `bandit_final.txt` | Execução final, 291 linhas, 0 problemas |
+| `pip_audit_antes.txt` / `pip_audit_depois.txt` | Execuções do relatório inicial |
+| `pip_audit_final.txt` | Execução final com versões fixadas |
+| `safety_antes.json` / `safety_depois.json` | Relatórios com 14 alertas ignorados |
+| `safety_intermediario_pip_26.2.1.json` | Scan com 1 alerta ignorado (`pip` 26.2.1), preservado como registro do processo |
+| `safety_final.json` | Scan final, 0 alertas |
 
-### 4.2 pip-audit
+---
 
-Resultado registrado:
+## 5. Limitações e transparência
 
-**No known vulnerabilities found.**
-
-Não foram encontradas vulnerabilidades conhecidas nas dependências declaradas em `requirements.txt`.
-
-### 4.3 Safety
-
-O relatório final registrou:
-
-- Dependências testadas: 80.
-- Alertas encontrados: 14.
-- Alertas ignorados pelas políticas: 14.
-- Alertas não ignorados: 0.
-- Correções sugeridas: 0.
-
-Os alertas estavam relacionados aos mesmos pacotes identificados na análise inicial:
-
-- **pytest:** um alerta associado à especificação sem versão fixada (`unpinned-specification`).
-- **filelock:** 13 alertas associados à versão 3.32.7 (`environment-dependency`).
-
-Os mesmos identificadores de alertas foram encontrados nos relatórios inicial e final.
-
-## 5. Comparação dos resultados
-
-| Ferramenta | Antes | Depois |
-|---|---|---|
-| Bandit | 133 linhas; 0 problemas | 291 linhas; 0 problemas |
-| pip-audit | Nenhuma vulnerabilidade conhecida encontrada | Nenhuma vulnerabilidade conhecida encontrada |
-| Safety | 14 alertas, todos ignorados | 14 alertas, todos ignorados |
-
-### 5.1 Comparação do Bandit
-
-O volume de código analisado aumentou de 133 para 291 linhas. Mesmo com o crescimento do código decorrente da modernização, a ferramenta continuou sem identificar problemas.
-
-Esse resultado indica que não foram introduzidos padrões inseguros detectáveis pelo Bandit dentro do escopo analisado.
-
-### 5.2 Comparação do pip-audit
-
-A ferramenta apresentou o mesmo resultado antes e depois: nenhuma vulnerabilidade conhecida encontrada nas dependências verificadas.
-
-Isso representa um resultado positivo para o conjunto de dependências declarado no arquivo `requirements.txt`.
-
-### 5.3 Comparação do Safety
-
-O Safety identificou 14 alertas nos dois momentos, todos ignorados pelas políticas padrão.
-
-Não houve redução no número de alertas registrados. Também não foram sugeridas correções na análise final.
-
-É importante destacar que um alerta ignorado não significa que a vulnerabilidade foi corrigida. Significa que ele foi classificado como ignorado conforme a política aplicada.
-
-## 6. Interpretação dos alertas do Safety
-
-### 6.1 Alerta relacionado ao pytest
-
-O alerta `SFTY-20260122-20373` está associado à ausência de uma versão fixada na especificação da dependência.
-
-A classificação `unpinned-specification` indica que a dependência não possui uma versão explicitamente fixada naquela especificação analisada.
-
-Fixar versões contribui para a reprodutibilidade do ambiente, pois reduz diferenças entre instalações realizadas em momentos distintos.
-
-### 6.2 Alertas relacionados ao filelock
-
-Foram registrados 13 alertas associados à versão `filelock==3.32.7`.
-
-A classificação `environment-dependency` indica que o pacote foi identificado como dependência do ambiente analisado, e não como dependência diretamente declarada no arquivo `requirements.txt`.
-
-Por esse motivo, os alertas foram ignorados pela política padrão correspondente.
-
-## 7. Limitações da comparação
-
-Os resultados devem ser interpretados considerando algumas limitações:
-
-- O relatório inicial do Safety foi gerado em um clone do projeto no Windows.
-- O relatório final foi gerado no Ubuntu, utilizando a branch `test/security-audits`.
-- Os ambientes de execução não eram rigorosamente idênticos.
-- A instalação do Safety no ambiente virtual alterou dependências desse ambiente, incluindo o pacote `filelock`.
-- O Bandit analisou o diretório `src`.
-- O pip-audit verificou as dependências declaradas em `requirements.txt`.
-- O Safety também identificou dependências presentes no ambiente virtual.
-
-Assim, a comparação representa os resultados registrados em cada execução, mas não uma avaliação experimental realizada em ambientes completamente controlados e idênticos.
-
-Além disso, nenhuma dessas ferramentas, isoladamente, garante que o sistema esteja livre de todas as vulnerabilidades.
-
-## 8. Conclusão
-
-As auditorias realizadas permitiram avaliar diferentes aspectos da segurança do projeto antes e depois da modernização.
-
-O Bandit não identificou problemas nas duas execuções, mesmo com o aumento do código analisado. O pip-audit também apresentou resultados positivos nos dois momentos, sem encontrar vulnerabilidades conhecidas nas dependências declaradas.
-
-O Safety manteve 14 alertas nos dois relatórios, todos classificados como ignorados pelas políticas padrão. Portanto, esses alertas foram documentados, mas não devem ser considerados corrigidos.
-
-De maneira geral, os resultados indicam que a modernização não introduziu problemas detectáveis pelas ferramentas utilizadas dentro dos respectivos escopos analisados. A documentação dos resultados e de suas limitações permite manter a transparência e facilita futuras verificações de segurança.
-
-## 9. Evidências
-
-Os resultados completos das auditorias estão disponíveis no diretório `evidencias/`:
-
-- `bandit_antes.txt`
-- `bandit_depois.txt`
-- `pip_audit_antes.txt`
-- `pip_audit_depois.txt`
-- `safety_antes.json`
-- `safety_depois.json`
-
-As evidências finais foram registradas no GitHub e integradas à branch `develop` por meio do Pull Request #2.
+1. **Escopos diferentes.** O Safety inicial analisou 80 dependências, incluindo pacotes que entraram no ambiente por causa da instalação do próprio Safety. O scan final analisou 29, porque as ferramentas de auditoria ficaram fora do ambiente do projeto. A redução do número de dependências testadas é consequência da mudança de escopo, e não de remoção de pacotes do projeto.
+2. **Ambientes diferentes.** O relatório inicial foi gerado em outro clone no Windows e a segunda execução no Ubuntu. A execução final foi no Windows 11, com as ferramentas de auditoria em Python 3.14.7. As comparações devem ser lidas pelos pacotes, identificadores e classificações, e não como um experimento em ambientes idênticos.
+3. **Bandit e Python.** O Bandit analisa o código-fonte sem executá-lo, então a versão do Python do ambiente de auditoria não invalida o resultado.
+4. **Ignorado não significa corrigido.** Nos relatórios iniciais, todos os alertas estavam ignorados por política. A melhoria só é afirmada porque o relatório final foi gerado depois das correções e não lista mais nenhum alerta.
+5. **Resultado limitado ao momento.** As bases de vulnerabilidades mudam com o tempo. O resultado vale para a data e a versão das ferramentas registradas (Safety 3.8.1, execução de 12/11/2026).
+6. **Escopo das ferramentas.** As ferramentas não substituem testes funcionais, revisão manual ou análise dinâmica. Não foram avaliadas autenticação, autorização ou implantação em produção.
+7. **Não afirmamos** que o código-fonte tinha vulnerabilidades corrigidas. Nenhuma ferramenta apontou problemas em `src`, antes ou depois.
+
+---
+
+## 6. Como reproduzir (Windows / PowerShell)
+
+```powershell
+# Ambiente do projeto (somente dependências do projeto)
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install --upgrade pip
+python -m pip install -r requirements.txt
+python -m pytest -v
+deactivate
+
+# Ambiente separado para as ferramentas de auditoria (fora do repositório)
+cd ..
+python -m venv auditoria-venv
+.\auditoria-venv\Scripts\Activate.ps1
+python -m pip install --upgrade pip bandit pip-audit safety
+cd supermarket-receipt-modernizacao-av3-altaqualidade
+
+bandit -r src -f txt -o evidencias\bandit_final.txt
+pip-audit -r requirements.txt -f columns 2>&1 | Out-File -Encoding utf8 evidencias\pip_audit_final.txt
+safety scan --target . --save-as json evidencias\safety_final.json
+```
+
+O Safety exige uma conta gratuita na primeira execução.
