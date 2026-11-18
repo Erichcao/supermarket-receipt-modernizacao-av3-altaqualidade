@@ -1,0 +1,10 @@
+﻿pip-audit : WARNING:venv:Actual environment location may have moved due to redirects, links or junctions.
+No linha:1 caractere:1
++ pip-audit -r requirements.txt -f columns 2>&1 | Out-File -Encoding ut ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (WARNING:venv:Ac...s or junctions.:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+  Requested location: "C:\Users\023~1.964\AppData\Local\Temp\tmpl4o9dhgr\Scripts\python.exe"
+  Actual location:    "C:\Users\023.964724\AppData\Local\Temp\tmpl4o9dhgr\Scripts\python.exe"
+No known vulnerabilities found

@@ -4,6 +4,8 @@
 
 Este documento registra as atividades realizadas na preparação do projeto de modernização do sistema legado de supermercado, antes de qualquer alteração funcional no código original.
 
+Também apresenta a relação entre a preparação inicial e as etapas posteriores de desenvolvimento, permitindo acompanhar a evolução do projeto.
+
 ## 2. Código-base
 
 - Projeto original: SupermarketReceipt-Refactoring-Kata
@@ -12,15 +14,17 @@ Este documento registra as atividades realizadas na preparação do projeto de m
 - Branch original: `main`
 - Situação inicial: repositório original clonado localmente, com árvore de trabalho limpa.
 
-## 3. Ambiente de desenvolvimento
+## 3. Ambiente de desenvolvimento inicial
 
-- Sistema operacional: Windows
-- Linguagem: Python 3.15.1
-- Ambiente virtual: `.venv`
-- Gerenciador de pacotes: pip
-- Framework de testes: pytest 9.2.0
+- Sistema operacional: Windows.
+- Linguagem: Python.
+- Gerenciador de pacotes: pip.
+- Framework de testes: pytest 9.2.0.
+- Ambiente virtual: `.venv`.
 
 As dependências foram instaladas a partir do arquivo `requirements.txt` da implementação selecionada.
+
+Durante o desenvolvimento, também foi utilizado um ambiente Ubuntu com Python 3.12.3 para executar os testes, realizar as alterações e registrar as evidências finais.
 
 ## 4. Organização inicial
 
@@ -49,23 +53,32 @@ Resultado observado:
 
 ## 6. Interpretação do resultado
 
-A execução confirmou que o ambiente foi configurado corretamente e que o teste disponível no projeto original foi executado com sucesso.
+A execução confirmou que o ambiente inicial foi configurado corretamente e que o teste disponível no projeto original foi executado com sucesso.
 
-Entretanto, apenas um teste aprovado não representa uma validação completa do sistema. Será necessário compreender o código e desenvolver testes de caracterização para registrar o comportamento existente antes da refatoração.
+Entretanto, apenas um teste aprovado não representava uma validação completa do sistema. Por isso, foi necessário compreender o código e desenvolver testes de caracterização para registrar o comportamento existente antes da refatoração.
 
-## 7. Situação do código
+## 7. Situação do código na preparação inicial
 
-Até o momento deste registro, nenhuma alteração funcional foi realizada no código original.
+Na etapa registrada neste documento, nenhuma alteração funcional havia sido realizada no código original.
 
-As atividades concluídas foram preparação do ambiente, instalação das dependências, organização inicial das pastas e primeira execução dos testes.
+As atividades concluídas naquele momento foram a preparação do ambiente, a instalação das dependências, a organização inicial das pastas e a primeira execução dos testes.
 
-## 8. Próximas atividades
+## 8. Continuidade e evolução do projeto
 
-1. Analisar os arquivos principais do sistema.
-2. Identificar responsabilidades, dependências e possíveis problemas de manutenção.
-3. Elaborar o diagnóstico técnico.
-4. Registrar requisitos funcionais e não funcionais.
-5. Preparar o plano de contingência.
-6. Criar testes de caracterização antes das alterações.
-7. Executar as auditorias iniciais de segurança.
-8. Planejar a refatoração e a implementação dos combos.
+Após a preparação inicial, o projeto avançou pelas seguintes etapas:
+
+1. Análise dos arquivos principais, das responsabilidades e das dependências do sistema.
+2. Elaboração do diagnóstico técnico e identificação de problemas de manutenção.
+3. Definição dos requisitos funcionais, não funcionais e regras de negócio.
+4. Elaboração do plano de contingência.
+5. Criação de testes de caracterização para preservar o comportamento legado.
+6. Execução e documentação das auditorias iniciais de segurança.
+7. Refatoração das promoções utilizando os padrões Strategy e Factory Method.
+8. Implementação da promoção de combos com desconto de 10% e regra de exclusividade por unidade.
+9. Criação de testes automatizados para validar as funcionalidades originais e as novas regras.
+10. Execução das auditorias finais e comparação dos resultados.
+11. Atualização da documentação técnica e das evidências do projeto.
+
+Ao final da implementação, a suíte automatizada passou a contar com 59 testes aprovados, abrangendo os comportamentos caracterizados e as novas funcionalidades.
+
+Os resultados detalhados das etapas estão registrados nos documentos técnicos e nos arquivos da pasta `evidencias/`.
