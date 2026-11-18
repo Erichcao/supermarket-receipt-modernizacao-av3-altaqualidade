@@ -1,4 +1,4 @@
-﻿approvaltests==20.0.1
+approvaltests==20.0.1
 coverage==7.17.2
 pytest==9.2.0
 pytest-approvaltests==0.2.4
