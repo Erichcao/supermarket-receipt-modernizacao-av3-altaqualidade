@@ -309,8 +309,8 @@ Qualquer pessoa ou ferramenta de IA que dê continuidade ao projeto deverá:
 - [x] Commit e Pull Request de segurança criados.
 - [ ] Revisão e merge do Pull Request de segurança na `develop`.
 - [x] Análise de cobertura de testes executada.
-- [ ] Evidência de cobertura (`evidencias/cobertura_final.txt`) commitada.
-- [ ] Bandit executado novamente se o código de `src` mudar após a última auditoria.
+- [x] Evidência de cobertura (`evidencias/cobertura_final.txt`) commitada.
+- [ ] Bandit executado novamente se o código de `src` mudar após a última auditoria (última execução: 12/11/2026, sem alterações em `src` registradas desde então).
 - [ ] Revisão final da documentação e das evidências.
 - [ ] README finalizado.
 - [ ] Apresentação de 10 a 15 minutos preparada.
@@ -318,18 +318,32 @@ Qualquer pessoa ou ferramenta de IA que dê continuidade ao projeto deverá:
 
 ## 13. Situação e atividades de finalização
 
-A implementação principal, a documentação técnica, os testes automatizados e as auditorias de segurança foram realizados e registrados.
+A implementação, a documentação técnica, os testes automatizados e as auditorias de segurança estão concluídos e registrados.
 
-Na etapa mais recente, os alertas do Safety foram tratados: versões fixadas, ambiente do projeto separado do ambiente de auditoria e `pip` atualizado. O Safety final testou 29 dependências e não reportou alertas; o Bandit analisou 291 linhas sem problemas; o pip-audit não encontrou vulnerabilidades conhecidas.
+- **Testes:** 61 aprovados (45 de caracterização e 1 original em `test_legacy_behavior.py` e `test_supermarket.py`, 14 de combos e 1 da fábrica). Evidência em `evidencias/testes_final.txt`; comparativo com a linha de base em `docs/evidencias_testes.md`.
+- **Cobertura:** 99% com cobertura de ramos (213 comandos em `src`, 3 sem cobertura, 40 ramos, 0 parciais). Evidências em `evidencias/cobertura_final.txt` e `evidencias/cobertura_testes.txt`.
+- **Segurança (execução final de 12/11/2026):** Bandit com 291 linhas e 0 problemas; pip-audit sem vulnerabilidades conhecidas; Safety com 29 dependências e 0 alertas. Os 14 alertas iniciais foram tratados com versões fixadas, ambiente de auditoria separado e atualização do `pip`.
 
-As atividades de finalização incluem:
+### Atividades de finalização
 
-- Obter a revisão e fazer o merge do Pull Request de segurança.
-- Salvar e commitar a evidência de cobertura e de testes.
-- Revisar a documentação e as evidências.
-- Conferir a integridade final do repositório.
-- Atualizar o README.
-- Integrar a documentação final à branch de desenvolvimento por Pull Request.
-- Preparar a apresentação de 10 a 15 minutos.
+| Atividade | Situação |
+|---|---|
+| Evidências de testes e cobertura salvas em `evidencias/` | Concluída |
+| Comparativo de testes antes/depois (`docs/evidencias_testes.md`) | Concluída (aguarda commit) |
+| README atualizado (resultado final do Safety, estrutura, ambiente e auditorias) | Concluída (aguarda commit) |
+| Revisão e merge do Pull Request de segurança na `main` | Pendente (revisão por outro integrante) |
+| Salvar `requirements.txt` em UTF-8 sem BOM | Pendente |
+| Reexecutar o Bandit se `src/` mudar após 12/11/2026 | Condicional |
+| Revisão final da documentação e das evidências | Pendente |
+| Criar `apresentacao/` com os slides (10 a 15 minutos) | Pendente |
+| Integração final em `develop` e `main` por Pull Request | Pendente |
+
+### Pontos a preparar para a defesa
+
+- **Strategy e Factory Method:** cobrem as quatro promoções individuais (`ten_percent_discount`, `three_for_two`, `two_for_amount`, `five_for_amount`), selecionadas por `PromotionFactory`. O combo usa `BundleOffer` e `BundleDiscountStrategy`, com outra assinatura, porque depende de várias quantidades e reserva unidades; ele não passa pela fábrica.
+- **Política de convivência:** exclusividade por unidade. As unidades usadas em combos são reservadas, e as excedentes seguem elegíveis às promoções individuais.
+- **Percentual do combo:** é parâmetro de `Teller.add_bundle_offer`, validado entre 0 (exclusivo) e 100; os testes usam 10%.
+- **Preservação do comportamento:** os 46 testes legados também passam sobre o código original da `main` (procedimento em `docs/evidencias_testes.md`).
+- **Limitações das auditorias:** ambientes diferentes entre as execuções e mudança de escopo do Safety (80 dependências do `.venv` no relatório inicial; 29 no final). A ausência de alertas não prova segurança total.
 
 A entrega deverá permitir que o grupo explique as decisões técnicas, os padrões utilizados, as regras de negócio, os testes e os resultados das análises de segurança, incluindo as limitações de escopo e de ambiente.

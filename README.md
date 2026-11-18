@@ -1,240 +1,144 @@
-# Supermarket Receipt – Modernização de Software
+# 🏭 Sistema Industrial de Monitorização de Pintura de Blocos de Madeira (IoT)
 
-Projeto acadêmico desenvolvido para a disciplina de Alta Qualidade de Software.
+Este projeto consiste em uma solução de IoT industrial para o acompanhamento e monitorização em tempo real do processo de pintura de blocos de madeira e das condições ambientais no chão de fábrica. 
 
-O objetivo é modernizar gradualmente um sistema legado de checkout de supermercado, preservando seu comportamento original e aplicando boas práticas de engenharia de software, padrões de projeto, testes automatizados e auditorias de segurança.
-
-## 1. Objetivos do projeto
-
-- Analisar e documentar o funcionamento do sistema legado.
-- Criar testes de caracterização para preservar o comportamento original.
-- Refatorar o código de forma incremental.
-- Aplicar padrões de projeto para melhorar a organização e a manutenção do sistema.
-- Implementar uma nova funcionalidade de descontos por combos de produtos.
-- Garantir a compatibilidade com as promoções existentes.
-- Realizar testes de regressão e auditorias de segurança.
-
-## 2. Funcionalidades implementadas
-
-O sistema possui funcionalidades de checkout e aplicação de promoções, incluindo:
-
-- Desconto percentual.
-- Promoção de três produtos pelo preço de dois.
-- Promoção de dois produtos por um valor determinado.
-- Promoção de cinco produtos por um valor determinado.
-- Desconto de 10% para combos completos de produtos.
-
-### Regra dos descontos por combos
-
-A implementação dos combos segue a política de exclusividade por unidade:
-
-- Somente combinações completas recebem o desconto.
-- Os produtos utilizados em um combo não recebem simultaneamente promoções individuais.
-- Unidades excedentes continuam elegíveis às promoções individuais existentes.
-- Uma mesma unidade não pode ser utilizada em mais de um combo.
-- Produtos vendidos por peso não participam dos combos.
-
-## 3. Padrões de projeto aplicados
-
-Foram implementados dois padrões de projeto:
-
-**Strategy**
-
-Permite encapsular cada modalidade de promoção em uma estratégia independente, facilitando a manutenção e a inclusão de novas regras de desconto.
-
-**Factory Method**
-
-Centraliza a criação das estratégias de promoção, evitando que a lógica de seleção das promoções fique espalhada pelo sistema.
-
-As implementações estão organizadas no diretório `src/promotions/`.
-
-## 4. Testes automatizados
-
-Foram desenvolvidos testes para preservar o comportamento legado e validar as novas funcionalidades e estruturas de modernização.
-
-Resultados da validação final:
-
-- 45 testes de caracterização, além do teste original.
-- 14 testes específicos para os descontos por combos.
-- 1 teste para validar a rejeição de tipos de promoção não suportados pela fábrica.
-- **61 testes aprovados** na execução completa da suíte.
-- **99% de cobertura de código**, com 633 das 636 instruções executadas.
-
-As instruções não cobertas correspondem a proteções de acesso ao banco de dados utilizadas no catálogo e à declaração do método abstrato da estratégia de promoção.
-
-Para executar os testes:
-
-```bash
-python -m pytest -v
-```
-
-Para verificar a cobertura:
-
-```bash
-python -m coverage run -m pytest
-python -m coverage report -m
-```
-
-O relatório de cobertura está disponível em `evidencias/cobertura_testes.txt`.
-
-## 5. Auditorias de segurança
-
-Foram utilizadas três ferramentas para analisar diferentes aspectos do projeto:
-
-**Bandit:** análise estática do código Python.
-
-**pip-audit:** verificação de vulnerabilidades conhecidas nas dependências declaradas.
-
-**Safety:** identificação de alertas de segurança relacionados às dependências e aplicação das políticas de análise.
-
-Resultados finais registrados:
-
-- Bandit: nenhum problema identificado na análise do diretório `src`.
-- pip-audit: nenhuma vulnerabilidade conhecida encontrada nas dependências declaradas em `requirements.txt`.
-- Safety: 14 alertas encontrados, todos ignorados pelas políticas padrão.
-
-Os resultados anteriores e posteriores à modernização estão documentados em `docs/seguranca_antes_depois.md`, com as evidências originais disponíveis no diretório `evidencias/`.
-
-**Observação:** alertas ignorados pelo Safety não devem ser considerados vulnerabilidades corrigidas. As limitações e diferenças entre os ambientes das execuções estão documentadas no comparativo de segurança.
-
-## 6. Estrutura do projeto
-
-```text
-supermarket-receipt-modernizacao-av3-altaqualidade/
-│
-├── docs/
-│   ├── diagnostico_tecnico.md
-│   ├── requisitos.md
-│   ├── plano_contingencia.md
-│   ├── padroes_projeto.md
-│   ├── seguranca_antes_depois.md
-│   └── registro_preparacao.md
-│
-├── evidencias/
-│   ├── ambiente_inicial.txt
-│   ├── bandit_antes.txt
-│   ├── bandit_depois.txt
-│   ├── pip_audit_antes.txt
-│   ├── pip_audit_depois.txt
-│   ├── safety_antes.json
-│   ├── safety_depois.json
-│   └── testes_originais.txt
-│
-├── src/
-│   ├── catalog.py
-│   ├── model_objects.py
-│   ├── receipt.py
-│   ├── shopping_cart.py
-│   ├── teller.py
-│   └── promotions/
-│
-├── tests/
-│   ├── test_supermarket.py
-│   ├── test_legacy_behavior.py
-│   ├── test_bundle_discount.py
-│   ├── fake_catalog.py
-│   └── receipt_printer.py
-│
-├── GUIA_CONTINUIDADE.md
-├── README.md
-├── README_ORIGINAL.md
-├── requirements.txt
-└── pytest.ini
-```
-
-## 7. Como configurar o ambiente
-
-Clone o repositório:
-
-```bash
-git clone https://github.com/Erichcao/supermarket-receipt-modernizacao-av3-altaqualidade.git
-```
-
-Acesse a pasta:
-
-```bash
-cd supermarket-receipt-modernizacao-av3-altaqualidade
-```
-
-Crie um ambiente virtual:
-
-```bash
-python -m venv .venv
-```
-
-Ative o ambiente virtual.
-
-No Linux:
-
-```bash
-source .venv/bin/activate
-```
-
-No Windows PowerShell:
-
-```powershell
-.venv\Scripts\Activate.ps1
-```
-
-Instale as dependências:
-
-```bash
-python -m pip install -r requirements.txt
-```
-
-## 8. Execução e validação
-
-Para executar a suíte completa de testes:
-
-```bash
-python -m pytest -v
-```
-
-Para executar a análise de segurança com Bandit:
-
-```bash
-bandit -r src
-```
-
-Para verificar as dependências declaradas:
-
-```bash
-python -m pip_audit -r requirements.txt
-```
-
-Para executar o Safety:
-
-```bash
-python -m safety scan
-```
-
-Os resultados das auditorias e os registros das execuções estão disponíveis no diretório `evidencias/`.
-
-## 9. Organização do desenvolvimento
-
-O desenvolvimento utiliza branches específicas para separar as atividades e facilitar a integração.
-
-A branch `main` é mantida como referência estável, enquanto `develop` funciona como branch de integração.
-
-As alterações são realizadas em branches de trabalho e integradas à `develop` por meio de Pull Requests, após revisão e validação.
-
-## 10. Documentação complementar
-
-Os detalhes técnicos e os registros do projeto estão organizados nos seguintes documentos:
-
-- `docs/diagnostico_tecnico.md`: análise do sistema legado.
-- `docs/requisitos.md`: requisitos funcionais e não funcionais.
-- `docs/plano_contingencia.md`: planejamento de contingência.
-- `docs/padroes_projeto.md`: justificativa e aplicação dos padrões de projeto.
-- `docs/seguranca_antes_depois.md`: comparação das auditorias de segurança.
-- `GUIA_CONTINUIDADE.md`: orientações para continuidade do desenvolvimento.
-
-## 11. Situação do projeto
-
-A caracterização do comportamento legado, a refatoração, a implementação dos descontos por combos, os testes de regressão e as auditorias de segurança foram concluídos.
-
-O projeto encontra-se na etapa de revisão da documentação, análise de cobertura dos testes, organização das evidências e preparação da apresentação final.
+O sistema realiza a leitura de sensores em um **ESP32 (Chão de Fábrica)**, transmite os pacotes via protocolo sem fio **ESP-NOW** para um **ESP32-S3 (Monitoramento)** equipado com matriz de LEDs MAX7219, encaminha as leituras via requisições HTTP POST para uma **API Flask**, armazena os dados no **InfluxDB** e exibe os dados em um dashboard em **Streamlit**.
 
 ---
 
-**Projeto acadêmico — Alta Qualidade de Software**
+## 🎯 Conteúdos Formativos & Objetivos
+- **Comunicação sem fio com ESP-NOW:** Transmissão eficiente de pacotes de dados de 20 bytes entre microcontroladores.
+- **Desenvolvimento Backend IoT em Python:** Construção de API REST em Flask para intermediação e validação de pacotes.
+- **Banco de Dados Temporal:** Registro de dados em série temporal com timestamp no InfluxDB.
+- **Visualização em Tempo Real:** Visualização de indicadores operacionais e alertas através de painel interativo no Streamlit.
+- **Versionamento e Entrega:** Estruturação e controle de versão do projeto utilizando Git e GitHub na branch `feat/robo-lab`.
+
+---
+
+## 📋 Equipamentos e Materiais
+
+| Item | Descrição / Quantidade |
+| :--- | :--- |
+| **Microcontrolador Emissor** | 1x ESP32 (Chão de Fábrica) |
+| **Microcontrolador Receptor** | 1x ESP32-S3 (Monitoramento) |
+| **Sensor de Nível** | 1x Sensor Ultrassônico HC-SR04 |
+| **Sensor Ambiental** | 1x Sensor de Temperatura e Umidade DHT22 |
+| **Sensor de Luz** | 1x Fotorresistor (LDR) |
+| **Display Local** | 1x Matriz de LEDs MAX7219 |
+| **Sinalização Visual Local** | 1x LED Verde (Operação Normal) e 1x LED Vermelho (Nível Crítico) |
+| **Software / Serviços** | Arduino IDE, Python 3, Flask, InfluxDB 2.x, Streamlit, Git/GitHub |
+
+---
+
+## 📐 Arquitetura da Solução
+
+```text
+ [Sensores] -> [ESP32 Emissor] --(ESP-NOW)--> [ESP32-S3 Receptor] --(HTTP POST)--> [API Flask]
+(DHT/HC-SR04/LDR) (Chão de Fábrica)           (Com MAX7219)                  (Porta 5000)
+                                                                                  │
+                                                                        (Grava no InfluxDB)
+                                                                                  │
+                                                                                  ▼
+                                                                      [Dashboard Streamlit]
+                                                                           (Porta 8501)
+```
+
+---
+
+## 🔌 Conexão dos Componentes (Como Montar o Projeto)
+
+### 1. ESP32 - Chão de Fábrica (Emissor)
+- **Sensor Ultrassônico (HC-SR04):** Trig `GPIO 5` | Echo `GPIO 18` | VCC `5V` | GND `GND`
+- **DHT22 (Temperatura e Umidade):** Data `GPIO 4` | VCC `3.3V` | GND `GND`
+- **Fotorresistor (LDR):** Signal `GPIO 34` (com resistor pull-down) | VCC `3.3V` | GND `GND`
+- **LED Verde (Faixa Segura >= 20%):** Anodo `GPIO 13` (com resistor 220Ω) | Catodo `GND`
+- **LED Vermelho (Alerta Nível Baixo < 20%):** Anodo `GPIO 15` (com resistor 220Ω) | Catodo `GND`
+
+### 2. ESP32-S3 - Monitoramento (Receptor)
+- **Matriz de LEDs MAX7219:**
+  - `DIN` -> `GPIO 11`
+  - `CLK` -> `GPIO 12`
+  - `CS`  -> `GPIO 10`
+  - `VCC` -> `5V` | `GND` -> `GND`
+
+---
+
+## 💾 Banco de Dados & Visualização
+
+* **Banco de Dados (InfluxDB 2.x):**
+  * **Organização (`org`):** `Iot`
+  * **Bucket:** `IOT`
+  * **Measurement:** `dados_fabrica`
+  * **Campos Registrados (`fields`):** `nivel` (float), `temperatura` (float), `umidade` (float), `luminosidade` (int).
+* **Dashboard Visual (Streamlit):**
+  * Apresenta indicadores em tempo real (KPIs), manômetro (*Gauge*) de nível do tanque com faixas de segurança, gráficos temporais de temperatura/umidade e tabela expansível com histórico dos dados.
+
+---
+
+## 🚀 Como Rodar o Backend e o Dashboard
+
+### 1. Instalar as Dependências do Python
+Abra o terminal na raiz do projeto e execute:
+```bash
+pip install flask influxdb-client streamlit plotly pandas
+```
+
+### 2. Iniciar o InfluxDB
+No PowerShell, navegue até a pasta do InfluxDB e inicie o serviço:
+```powershell
+.\influxd.exe
+```
+> Mantendo o InfluxDB em execução na porta `8086`.
+
+### 3. Iniciar a API Flask (Backend)
+Navegue até a pasta `backend/` e execute:
+```bash
+python app.py
+```
+> A API escutará requisições na porta `5000` (`http://0.0.0.0:5000/api/telemetria`).
+
+### 4. Iniciar o Dashboard Streamlit
+Navegue até a pasta `dashboard/` e execute:
+```bash
+python -m streamlit run dashboard.py
+```
+> Acesse o painel pelo navegador no endereço: `http://localhost:8501`.
+
+---
+
+## 🔍 Como Consultar os Dados Salvos
+
+### Opção 1: Via Dashboard Streamlit
+Acesse `http://localhost:8501` no seu navegador. O painel atualiza a cada 2 segundos exibindo as métricas dos sensores, manômetro de nível e histórico temporal.
+
+### Opção 2: Via Interface Web do InfluxDB
+1. Abra a URL `http://127.0.0.1:8086` no navegador.
+2. Acesse a aba **Data Explorer**.
+3. Selecione a organização `Iot` e o bucket `IOT`.
+4. Escolha a measurement `dados_fabrica` e clique em **Submit**.
+
+### Opção 3: Consulta via Consulta Flux (CLI / Python)
+```flux
+from(bucket: "IOT")
+  |> range(start: -1h)
+  |> filter(fn: (r) => r["_measurement"] == "dados_fabrica")
+  |> pivot(rowKey:["_time"], columnKey: ["_field"], valueColumn: "_value")
+```
+
+---
+
+## 📁 Versionamento e Entrega no GitHub
+
+Este projeto foi versionado e disponibilizado no GitHub utilizando a branch de entrega exigida:
+
+```bash
+# Criar e alternar para a branch de desenvolvimento e entrega
+git checkout -b feat/robo-lab
+
+# Adicionar arquivos e realizar commit
+git add .
+git commit -m "feat: entrega completa do sistema IoT na branch feat/robo-lab"
+
+# Envio para o repositório remoto
+git push -u origin feat/robo-lab
+```
