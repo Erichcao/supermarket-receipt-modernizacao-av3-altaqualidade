@@ -62,6 +62,8 @@ Resultados da validação final:
 
 As instruções não cobertas correspondem a proteções de acesso ao banco de dados utilizadas no catálogo e à declaração do método abstrato da estratégia de promoção.
 
+A cobertura foi calculada considerando os arquivos do diretório src/, conforme registrado em evidencias/cobertura_final.txt.
+
 Para executar os testes:
 
 ```bash
@@ -91,11 +93,13 @@ Resultados finais registrados:
 
 - Bandit: nenhum problema identificado na análise do diretório `src`.
 - pip-audit: nenhuma vulnerabilidade conhecida encontrada nas dependências declaradas em `requirements.txt`.
-- Safety: 14 alertas encontrados, todos ignorados pelas políticas padrão.
+- Safety: nenhuma vulnerabilidade conhecida identificada na análise final, sem alertas ignorados.
+
+Na análise inicial, o Safety identificou 14 alertas, todos ignorados pelas políticas aplicadas naquela execução. Após os ajustes no ambiente e nas dependências, a análise final registrou zero alertas.
 
 Os resultados anteriores e posteriores à modernização estão documentados em `docs/seguranca_antes_depois.md`, com as evidências originais disponíveis no diretório `evidencias/`.
 
-**Observação:** alertas ignorados pelo Safety não devem ser considerados vulnerabilidades corrigidas. As limitações e diferenças entre os ambientes das execuções estão documentadas no comparativo de segurança.
+**Observação:** os 14 alertas ignorados pelo Safety na análise inicial não devem ser considerados vulnerabilidades corrigidas. A análise final apresentou zero alertas. As limitações e diferenças entre os ambientes das execuções estão documentadas no comparativo de segurança.
 
 ## 6. Estrutura do projeto
 
@@ -114,12 +118,18 @@ supermarket-receipt-modernizacao-av3-altaqualidade/
 │   ├── ambiente_inicial.txt
 │   ├── bandit_antes.txt
 │   ├── bandit_depois.txt
+│   ├── bandit_final.txt
+│   ├── cobertura_final.txt
+│   ├── cobertura_testes.txt
 │   ├── pip_audit_antes.txt
 │   ├── pip_audit_depois.txt
+│   ├── pip_audit_final.txt
 │   ├── safety_antes.json
 │   ├── safety_depois.json
+│   ├── safety_final.json
+│   ├── safety_intermediario_pip_26.2.1.json
+│   ├── testes_final.txt
 │   └── testes_originais.txt
-│
 ├── src/
 │   ├── catalog.py
 │   ├── model_objects.py
@@ -233,7 +243,7 @@ Os detalhes técnicos e os registros do projeto estão organizados nos seguintes
 
 A caracterização do comportamento legado, a refatoração, a implementação dos descontos por combos, os testes de regressão e as auditorias de segurança foram concluídos.
 
-O projeto encontra-se na etapa de revisão da documentação, análise de cobertura dos testes, organização das evidências e preparação da apresentação final.
+A validação final registrou 61 testes aprovados, 99% de cobertura do código de produção e ausência de vulnerabilidades conhecidas nas análises finais realizadas com Bandit, pip-audit e Safety.
 
 ---
 
