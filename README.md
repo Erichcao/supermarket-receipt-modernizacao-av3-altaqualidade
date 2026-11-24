@@ -42,9 +42,9 @@ Foram implementados dois padrões de projeto:
 
 Permite encapsular cada modalidade de promoção em uma estratégia independente, facilitando a manutenção e a inclusão de novas regras de desconto.
 
-**Factory Method**
+**Simple Factory (Fábrica Simples)**
 
-Centraliza a criação das estratégias de promoção, evitando que a lógica de seleção das promoções fique espalhada pelo sistema.
+Centraliza a seleção e a criação das estratégias de promoção. A classe `PromotionFactory` recebe o tipo de promoção, identifica a estratégia correspondente e instancia a classe responsável por aplicar a regra de desconto. Tipos não suportados são tratados por meio de uma exceção `ValueError`.
 
 As implementações estão organizadas no diretório `src/promotions/`.
 
@@ -58,7 +58,7 @@ Resultados da validação final:
 - 14 testes específicos para os descontos por combos.
 - 1 teste para validar a rejeição de tipos de promoção não suportados pela fábrica.
 - **61 testes aprovados** na execução completa da suíte.
-- **99% de cobertura de código**, com 633 das 636 instruções executadas.
+- **99% de cobertura de código**, com 210 das 213 instruções executadas.
 
 As instruções não cobertas correspondem a proteções de acesso ao banco de dados utilizadas no catálogo e à declaração do método abstrato da estratégia de promoção.
 
