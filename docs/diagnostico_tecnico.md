@@ -297,6 +297,13 @@ Durante a modernização, foram aplicadas as seguintes melhorias:
 - Definição da política de exclusividade por unidade para evitar descontos duplicados.
 - Ampliação da suíte de testes para validar o comportamento legado e as novas funcionalidades.
 
-A suíte completa passou a contar com 59 testes aprovados, incluindo os testes de caracterização e os testes específicos dos combos.
+A suíte completa passou a contar com **61 testes automatizados aprovados**, distribuídos entre:
+
+- 1 teste original;
+- 45 testes de caracterização do comportamento legado;
+- 14 testes específicos para os descontos por combos;
+- 1 teste para validar a rejeição de tipos de promoção não suportados pela fábrica.
+
+Os resultados da execução final estão registrados em `evidencias/testes_final.txt`.
 
 As decisões de arquitetura estão detalhadas em `docs/padroes_projeto.md`, enquanto os resultados das auditorias estão documentados em `docs/seguranca_antes_depois.md` e na pasta `evidencias/`.
