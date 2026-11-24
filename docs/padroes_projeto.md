@@ -6,7 +6,7 @@ Aplicar padrões de projeto e princípios de qualidade para reduzir o acoplament
 
 A modernização foi realizada de forma incremental, preservando o comportamento das funcionalidades existentes e permitindo a inclusão de novas regras de negócio, especialmente a promoção de combos.
 
-Foram aplicados os padrões Strategy e Factory Method, considerando os problemas identificados durante a análise da arquitetura original.
+Foram aplicados os padrões Strategy e Simple Factory (Fábrica Simples), considerando os problemas identificados durante a análise da arquitetura original.
 
 ## 2. Padrão Strategy
 
@@ -45,7 +45,7 @@ Também respeita a regra de exclusividade por unidade definida nos requisitos: u
 - Possibilidade de testar cada estratégia individualmente.
 - Melhor organização da implementação da nova promoção de combos.
 
-## 3. Padrão Factory Method
+## 3. Padrão Simple Factory (Fábrica Simples)
 
 ### Problema identificado
 
@@ -55,19 +55,22 @@ Quando diferentes estratégias são adicionadas diretamente à lógica principal
 
 ### Aplicação realizada
 
-O padrão Factory Method foi aplicado por meio da classe `PromotionFactory`, responsável por centralizar a criação e a seleção das estratégias de promoção.
+O padrão Simple Factory (Fábrica Simples) foi aplicado por meio da classe `PromotionFactory`, responsável por centralizar a seleção e a criação das estratégias de promoção.
 
-A fábrica recebe as informações necessárias sobre o tipo de oferta e retorna a estratégia correspondente, mantendo a criação dos objetos separada da execução dos cálculos.
+A fábrica recebe o tipo de oferta e utiliza um mapeamento entre os tipos de promoção e suas respectivas classes de estratégia. Em seguida, instancia e retorna a estratégia correspondente.
 
-Essa estrutura trabalha em conjunto com a abstração comum definida para as estratégias.
+Caso seja informado um tipo de promoção não suportado, a fábrica lança uma exceção `ValueError`, evitando a criação de estratégias inexistentes.
+
+Essa estrutura mantém a lógica de criação separada da execução dos cálculos e trabalha em conjunto com a abstração comum definida para as estratégias.
 
 ### Benefícios obtidos
 
-- Centralização da criação das estratégias.
+- Centralização da seleção e criação das estratégias.
 - Separação entre criação e execução das promoções.
 - Redução do acoplamento entre as classes.
 - Facilidade para incluir novos tipos de promoção.
 - Organização do processo de seleção das regras.
+- Tratamento explícito de tipos de promoção não suportados.
 
 ## 4. Princípios SOLID relacionados
 
