@@ -389,3 +389,29 @@ class TestReciboImpresso:
         receipt = checkout(teller, (toothbrush, 1.0))
         texto = ReceiptPrinter(columns=20).print_receipt(receipt)
         assert texto.splitlines()[0] == "toothbrush      0.99"
+
+
+class TestQuantidadesNaoPositivasComOferta:
+    def test_quantidade_zero_preserva_linha_de_desconto_zero(
+        self, teller, toothbrush
+    ):
+        teller.add_special_offer(
+            SpecialOfferType.TEN_PERCENT_DISCOUNT, toothbrush, 10
+        )
+        receipt = checkout(teller, (toothbrush, 0))
+
+        assert len(receipt.discounts) == 1
+        assert receipt.discounts[0].discount_amount == pytest.approx(0)
+        assert receipt.total_price() == pytest.approx(0)
+
+    def test_quantidade_negativa_preserva_calculo_legado(
+        self, teller, toothbrush
+    ):
+        teller.add_special_offer(
+            SpecialOfferType.TEN_PERCENT_DISCOUNT, toothbrush, 10
+        )
+        receipt = checkout(teller, (toothbrush, -1))
+
+        assert len(receipt.discounts) == 1
+        assert receipt.discounts[0].discount_amount == pytest.approx(0.099)
+        assert receipt.total_price() == pytest.approx(-0.891)
