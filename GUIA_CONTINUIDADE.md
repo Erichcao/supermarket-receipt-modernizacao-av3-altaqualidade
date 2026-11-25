@@ -65,7 +65,7 @@ Foram implementados dois padrões principais:
 
 Encapsula as regras de cálculo das promoções em estratégias independentes, permitindo organizar e testar cada tipo de oferta separadamente.
 
-**Factory Method**
+**Simple Factory**
 
 Centraliza a criação e a seleção das estratégias de promoção por meio da classe `PromotionFactory`.
 
@@ -98,7 +98,7 @@ python -m coverage run --branch --source=src -m pytest
 python -m coverage report -m
 ```
 
-Resultado da primeira execução (cobertura de linhas, incluindo os arquivos de teste no total): 99%. Considerando apenas `src`, são 213 comandos e 3 sem cobertura, aproximadamente 98,6%.
+Resultado final da cobertura de `src`: 213 instruções analisadas, sendo 210 cobertas e 3 não cobertas, correspondendo a aproximadamente 98,6% (99% arredondado). A análise também considerou 40 branches, sem branches parcialmente cobertos.
 
 Arquivos de `src` abaixo de 100%:
 
@@ -109,7 +109,7 @@ Arquivos de `src` abaixo de 100%:
 
 Essas linhas devem ser conferidas no código; a hipótese é que sejam corpos de métodos abstratos das interfaces, que não são executados diretamente. `shopping_cart.py`, `teller.py` e `bundle_discount.py` têm 100%.
 
-Limitação: a primeira execução mediu apenas linhas, e não ramos de decisão. Cobertura alta não prova que os testes verifiquem o comportamento correto. A evidência final fica em `evidencias/cobertura_final.txt`.
+Limitação: a cobertura de testes não garante, por si só, que todos os comportamentos estejam corretos. As três instruções não cobertas correspondem a exceções do catálogo e ao método abstrato da estratégia, que não são executados diretamente na suíte atual.
 
 ## 6. Dependências e ambientes
 
@@ -275,7 +275,7 @@ refactor: reorganiza implementação
 chore: atualiza configuração do projeto
 ```
 
-Último registro de segurança: commit `chore: fixa dependências e atualiza evidências de segurança`, na branch `fix/dependency-hygiene`, com Pull Request aberto para a `develop`. **Pendente:** revisão por outro integrante e merge.
+Último registro de segurança: commit `chore: fixa dependências e atualiza evidências de segurança`, na branch `fix/dependency-hygiene`. As alterações foram integradas à `main` pelo Pull Request #4 e posteriormente incorporadas à `develop` pelo Pull Request #5.
 
 ## 11. Orientações para continuidade
 
@@ -299,7 +299,7 @@ Qualquer pessoa ou ferramenta de IA que dê continuidade ao projeto deverá:
 
 - [x] Repositório independente criado e publicado.
 - [x] Testes de caracterização adicionados.
-- [x] Padrões Strategy e Factory Method implementados e documentados.
+- [x] Padrões Strategy e Simple Factory implementados e documentados.
 - [x] Promoção de combos implementada, com testes específicos.
 - [x] Bandit, pip-audit e Safety executados antes e depois.
 - [x] Dependências fixadas no `requirements.txt`.
@@ -307,12 +307,12 @@ Qualquer pessoa ou ferramenta de IA que dê continuidade ao projeto deverá:
 - [x] Evidências de segurança atualizadas.
 - [x] `docs/seguranca_antes_depois.md` atualizado.
 - [x] Commit e Pull Request de segurança criados.
-- [ ] Revisão e merge do Pull Request de segurança na `develop`.
+- [x] Revisão e merge do Pull Request de segurança na `develop`.
 - [x] Análise de cobertura de testes executada.
-- [ ] Evidência de cobertura (`evidencias/cobertura_final.txt`) commitada.
+- [x] Evidência de cobertura (`evidencias/cobertura_final.txt`) commitada.
 - [ ] Bandit executado novamente se o código de `src` mudar após a última auditoria.
 - [ ] Revisão final da documentação e das evidências.
-- [ ] README finalizado.
+- [x] README finalizado.
 - [ ] Apresentação de 10 a 15 minutos preparada.
 - [ ] Integração final validada em `develop` e `main`.
 
@@ -322,14 +322,12 @@ A implementação principal, a documentação técnica, os testes automatizados 
 
 Na etapa mais recente, os alertas do Safety foram tratados: versões fixadas, ambiente do projeto separado do ambiente de auditoria e `pip` atualizado. O Safety final testou 29 dependências e não reportou alertas; o Bandit analisou 291 linhas sem problemas; o pip-audit não encontrou vulnerabilidades conhecidas.
 
-As atividades de finalização incluem:
+As atividades restantes de finalização incluem:
 
-- Obter a revisão e fazer o merge do Pull Request de segurança.
-- Salvar e commitar a evidência de cobertura e de testes.
 - Revisar a documentação e as evidências.
 - Conferir a integridade final do repositório.
-- Atualizar o README.
-- Integrar a documentação final à branch de desenvolvimento por Pull Request.
+- Validar a integração final nas branches `develop` e `main`.
 - Preparar a apresentação de 10 a 15 minutos.
+- Executar novamente a suíte completa de testes após as últimas alterações.
 
 A entrega deverá permitir que o grupo explique as decisões técnicas, os padrões utilizados, as regras de negócio, os testes e os resultados das análises de segurança, incluindo as limitações de escopo e de ambiente.

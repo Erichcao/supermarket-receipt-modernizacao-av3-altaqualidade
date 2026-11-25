@@ -22,7 +22,7 @@ Essa organização dificultava a manutenção, os testes isolados e a inclusão 
 
 O padrão Strategy foi utilizado para encapsular cada regra de cálculo de promoção em uma estratégia independente.
 
-As estratégias implementam uma abstração comum, permitindo que o sistema execute diferentes regras sem precisar conhecer os detalhes internos de cada cálculo.
+As quatro estratégias de promoções individuais implementam uma abstração comum, permitindo que o sistema execute diferentes regras sem precisar conhecer os detalhes internos de cada cálculo. A estratégia de combos possui uma implementação específica, com responsabilidades e parâmetros próprios para calcular descontos sobre conjuntos de produtos.
 
 Foram implementadas as seguintes estratégias:
 
@@ -77,8 +77,8 @@ Essa estrutura mantém a lógica de criação separada da execução dos cálcul
 A modernização buscou aplicar os seguintes princípios:
 
 - **SRP (Responsabilidade Única):** cada estratégia é responsável por uma regra específica de promoção, evitando a concentração de diferentes cálculos em uma única classe.
-- **OCP (Aberto/Fechado):** novas estratégias podem ser adicionadas por meio da abstração comum, reduzindo a necessidade de modificar a lógica central de execução das promoções.
-- **DIP (Inversão de Dependência):** a execução das promoções trabalha com uma abstração comum de estratégia, em vez de depender diretamente dos detalhes de cada implementação.
+- **OCP (Aberto/Fechado):** as estratégias individuais permitem adicionar novas regras de promoção sem concentrar seus cálculos na lógica principal. Entretanto, a inclusão de uma nova estratégia ainda exige atualizar o mapeamento da `PromotionFactory`.
+- **DIP (Inversão de Dependência):** as promoções individuais utilizam a abstração `PromotionStrategy`, reduzindo a dependência direta dos detalhes de cada cálculo. Entretanto, a aplicação do princípio é parcial, pois o `ShoppingCart` ainda depende diretamente de classes concretas, como `PromotionFactory` e `BundleDiscountStrategy`.
 
 A aplicação desses princípios é demonstrada pela estrutura implementada e pelos testes automatizados.
 
