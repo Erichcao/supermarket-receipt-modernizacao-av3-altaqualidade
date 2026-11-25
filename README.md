@@ -34,6 +34,19 @@ A implementação dos combos segue a política de exclusividade por unidade:
 - Uma mesma unidade não pode ser utilizada em mais de um combo.
 - Produtos vendidos por peso não participam dos combos.
 
+### Exemplo de cadastro de combo
+
+Com os produtos já cadastrados no catálogo, um combo pode ser registrado no caixa da seguinte forma:
+
+```python
+teller.add_bundle_offer(
+    products=[toothbrush, toothpaste],
+    discount_percentage=10
+)
+```
+
+O desconto é calculado no fechamento da compra e aparece como desconto identificado no recibo.
+
 ## 3. Padrões de projeto aplicados
 
 Foram implementados dois padrões de projeto:
@@ -54,10 +67,10 @@ Foram desenvolvidos testes para preservar o comportamento legado e validar as no
 
 Resultados da validação final:
 
-- 45 testes de caracterização, além do teste original.
-- 14 testes específicos para os descontos por combos.
+- 47 casos de caracterização na suíte final, além do teste original. A evidência histórica do código original registra 1 teste executado; os 47 casos não são apresentados como execução pré-refatoração.
+- 20 casos específicos para os descontos por combos.
 - 1 teste para validar a rejeição de tipos de promoção não suportados pela fábrica.
-- **61 testes aprovados** na execução completa da suíte.
+- **69 testes aprovados** na execução completa da suíte.
 - **99% de cobertura de código**, com 210 das 213 instruções executadas.
 
 As instruções não cobertas correspondem a proteções de acesso ao banco de dados utilizadas no catálogo e à declaração do método abstrato da estratégia de promoção.
@@ -237,13 +250,15 @@ Os detalhes técnicos e os registros do projeto estão organizados nos seguintes
 - `docs/plano_contingencia.md`: planejamento de contingência.
 - `docs/padroes_projeto.md`: justificativa e aplicação dos padrões de projeto.
 - `docs/seguranca_antes_depois.md`: comparação das auditorias de segurança.
+- `docs/matriz_rastreabilidade.md`: relação entre requisitos, implementação, testes e evidências.
+- `docs/licoes_aprendidas.md`: decisões, limitações e aprendizados da modernização.
 - `GUIA_CONTINUIDADE.md`: orientações para continuidade do desenvolvimento.
 
 ## 11. Situação do projeto
 
 A caracterização do comportamento legado, a refatoração, a implementação dos descontos por combos, os testes de regressão e as auditorias de segurança foram concluídos.
 
-A validação final registrou 61 testes aprovados, 99% de cobertura do código de produção e ausência de vulnerabilidades conhecidas nas análises finais realizadas com Bandit, pip-audit e Safety.
+A validação final registrou 69 testes aprovados, 99% de cobertura do código de produção e ausência de vulnerabilidades conhecidas nas análises finais realizadas com Bandit, pip-audit e Safety.
 
 ---
 
