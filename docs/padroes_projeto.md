@@ -110,3 +110,93 @@ A validação contempla:
 - Aprovação dos testes de regressão do sistema.
 
 A implementação busca reduzir o acoplamento e melhorar a organização interna do sistema sem comprometer os contratos públicos e o comportamento legado protegido pelos testes de caracterização.
+
+## 7. Diagrama simplificado das classes
+
+O diagrama destaca as responsabilidades das promoções individuais e dos combos. A estratégia de combo aparece separadamente porque, na implementação atual, ela não herda de `PromotionStrategy`.
+
+```mermaid
+classDiagram
+    class ShoppingCart {
+        +add_item(product)
+        +add_item_quantity(product, quantity)
+        +handle_offers(receipt, offers, catalog, bundle_offers)
+    }
+    class PromotionFactory {
+        +create_strategy(offer_type)
+    }
+    class PromotionStrategy {
+        <<abstract>>
+        +calculate(product, quantity, unit_price, argument)
+    }
+    class TenPercentDiscountStrategy
+    class ThreeForTwoStrategy
+    class TwoForAmountStrategy
+    class FiveForAmountStrategy
+    class BundleDiscountStrategy {
+        +calculate(offer, product_quantities, catalog)
+    }
+    class BundleOffer {
+        +products
+        +discount_percentage
+    }
+    class Teller {
+        +add_special_offer(offer_type, product, argument)
+        +add_bundle_offer(products, discount_percentage)
+        +checks_out_articles_from(the_cart)
+    }
+    class Receipt {
+        +add_product(...)
+        +add_discount(...)
+        +total_price()
+    }
+    PromotionStrategy <|.. TenPercentDiscountStrategy
+    PromotionStrategy <|.. ThreeForTwoStrategy
+    PromotionStrategy <|.. TwoForAmountStrategy
+    PromotionStrategy <|.. FiveForAmountStrategy
+    PromotionFactory ..> PromotionStrategy : instancia
+    ShoppingCart ..> PromotionFactory : utiliza
+    ShoppingCart ..> BundleDiscountStrategy : utiliza diretamente
+    ShoppingCart ..> BundleOffer : processa
+    Teller --> ShoppingCart : checkout
+    Teller --> Receipt : cria
+    Teller o-- BundleOffer : mantém ofertas
+```
+
+## 8. Trechos antes e depois da refatoração
+
+### Antes — seleção de promoções por condicionais
+
+O diagnóstico identificou que o método legado `handle_offers` selecionava o cálculo por meio de condicionais baseadas no tipo da oferta. O trecho abaixo é uma representação resumida dessa estrutura, não uma transcrição literal do arquivo original:
+
+```python
+# Representação resumida da estrutura legada
+if offer.offer_type == SpecialOfferType.TEN_PERCENT_DISCOUNT:
+    # calcula desconto percentual
+elif offer.offer_type == SpecialOfferType.THREE_FOR_TWO:
+    # calcula leve três, pague dois
+elif offer.offer_type == SpecialOfferType.TWO_FOR_AMOUNT:
+    # calcula duas unidades por valor fixo
+elif offer.offer_type == SpecialOfferType.FIVE_FOR_AMOUNT:
+    # calcula cinco unidades por valor fixo
+```
+
+### Depois — seleção por fábrica e cálculo encapsulado
+
+```python
+strategy = PromotionFactory.create_strategy(offer.offer_type)
+discount = strategy.calculate(
+    product,
+    quantity,
+    unit_price,
+    offer.argument
+)
+```
+
+Cada estratégia individual implementa `PromotionStrategy`, isolando o cálculo de sua modalidade. A fábrica é uma Simple Factory: centraliza a instanciação por mapeamento, mas não implementa o padrão GoF Factory Method.
+
+## 9. Critério de convivência entre combos e promoções individuais
+
+Os combos são processados antes das promoções individuais. As unidades reservadas para um combo completo não recebem outra promoção individual; as unidades excedentes continuam elegíveis às ofertas individuais cadastradas.
+
+Quando dois combos compartilham produtos, a ordem de cadastro determina a prioridade: o primeiro combo reserva as unidades disponíveis e os seguintes utilizam somente o saldo restante. O sistema não compara automaticamente os descontos para escolher a combinação de maior economia. Essa decisão evita reutilização da mesma unidade e descontos duplicados, mas não garante o menor preço possível ao cliente. A ordem de cadastro deve, portanto, ser considerada na configuração das ofertas.
