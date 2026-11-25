@@ -144,7 +144,7 @@ Esse teste configura uma oferta de 10% para escovas de dentes, mas adiciona maç
 
 Para ampliar a proteção do comportamento legado, o grupo desenvolveu o arquivo `test_legacy_behavior.py`, contendo testes de caracterização organizados por categorias.
 
-A suíte final possui 69 testes automatizados, conforme `evidencias/testes_final.txt`:
+A suíte ampliada possui 69 testes automatizados previstos. O log `evidencias/testes_final.txt` ainda registra a execução anterior, com 61 testes:
 
 - 1 teste em `test_supermarket.py`;
 - 47 casos de caracterização na suíte final em `test_legacy_behavior.py`;
