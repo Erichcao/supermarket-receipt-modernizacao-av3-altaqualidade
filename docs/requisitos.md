@@ -41,6 +41,9 @@ As unidades que não forem utilizadas na formação de combos devem permanecer e
 **RF13 – Restrição por unidade de venda**
 O sistema não deve permitir que produtos vendidos por peso participem da composição dos combos. Apenas produtos vendidos por unidade podem ser utilizados nessas ofertas.
 
+**RF14 – Geração e conteúdo do recibo**
+O sistema deve gerar um recibo contendo os produtos, quantidades, preços unitários, valores totais por item, descontos aplicados e total final da compra. Os descontos de combo devem ser identificáveis no recibo sem alterar indevidamente os itens originais da compra.
+
 ## 2. Requisitos Não Funcionais (RNF)
 
 **RNF01 – Organização do código**
@@ -66,6 +69,17 @@ O projeto deve ser submetido a ferramentas de análise de segurança de código 
 
 **RNF08 – Documentação**
 O projeto deve possuir documentação sobre sua estrutura, requisitos, decisões de implementação, padrões de projeto utilizados e resultados das análises realizadas.
+
+**Critérios verificáveis dos RNF**
+
+- RNF01: responsabilidades de catálogo, carrinho, checkout, recibo e estratégias devem estar separadas em módulos identificáveis; verificar pela estrutura de `src/`.
+- RNF02: uma nova estratégia individual deve poder ser adicionada como classe própria, com registro correspondente na `PromotionFactory`; a limitação do mapeamento deve permanecer documentada.
+- RNF03: os cálculos de promoções devem ser executáveis por estratégias isoladas e cobertos por testes específicos.
+- RNF04: os cenários de comportamento legado cobertos em `tests/test_legacy_behavior.py` devem continuar aprovados após alterações.
+- RNF05: `python -m pytest -v` deve concluir com todos os testes aprovados; a execução final registrada contém 61 testes.
+- RNF06: os valores de descontos e totais devem ser verificados por asserts numéricos, usando tolerância para cálculos de ponto flutuante.
+- RNF07: Bandit, pip-audit e Safety devem ser executados sobre os escopos documentados, com versões, comandos e resultados registrados.
+- RNF08: cada requisito funcional deve apontar para implementação, teste e evidência na rastreabilidade do projeto.
 
 ## 3. Regras de Negócio dos Combos
 
@@ -99,17 +113,16 @@ O projeto deve possuir documentação sobre sua estrutura, requisitos, decisões
 
 ## 4. Critérios de Aceitação
 
-A implementação será considerada adequada quando:
-
-1. O sistema cadastrar e consultar produtos corretamente.
-2. O carrinho calcular corretamente o valor total da compra.
-3. As promoções individuais existentes continuarem funcionando conforme o comportamento original.
-4. O sistema aplicar o desconto de 10% somente em combos completos.
-5. O sistema permitir a formação de múltiplos combos quando houver produtos suficientes.
-6. O sistema impedir que uma mesma unidade receba descontos duplicados.
-7. As unidades excedentes continuarem elegíveis às promoções individuais.
-8. Combos incompletos não receberem desconto.
-9. Produtos vendidos por peso não participarem dos combos.
-10. O sistema rejeitar percentuais de desconto inválidos no cadastro das ofertas.
-11. Os testes automatizados validarem os comportamentos originais e as novas funcionalidades.
-12. A documentação apresentar os requisitos, as decisões de implementação e os resultados das análises de segurança.
+- **CA01 — Cadastro e consulta:** produtos cadastrados devem ser recuperáveis pelo catálogo; validar com `test_product_with_name`.
+- **CA02 — Carrinho e total:** quantidades e preços devem compor o total sem ofertas; validar com `test_varios_produtos_somam_total` e testes de recibo.
+- **CA03 — Promoções existentes:** 10%, 3 por 2, 2 por valor e 5 por valor devem preservar os resultados caracterizados; validar pelas classes `TestDezPorCento`, `TestLeveTresPagueDois`, `TestDoisPorValor` e `TestCincoPorValor`.
+- **CA04 — Combo completo:** 1 escova + 1 pasta deve receber 10% sobre o valor dos dois produtos; validar com `test_aplica_desconto_em_um_combo_completo`.
+- **CA05 — Combo incompleto:** somente escova, sem pasta, não deve gerar desconto; validar com `test_nao_aplica_desconto_em_combo_incompleto`.
+- **CA06 — Múltiplos combos:** 2 escovas + 2 pastas devem formar dois combos; validar com `test_aplica_desconto_em_dois_combos_completos`.
+- **CA07 — Produto repetido na composição:** um combo que exige 2 escovas + 1 pasta só pode ser formado quando as três unidades estiverem disponíveis; validar com `test_combo_com_produto_repetido_exige_quantidade_correta`.
+- **CA08 — Excedentes:** unidades não reservadas pelo combo devem continuar elegíveis à promoção individual; validar com `test_unidades_excedentes_continuam_elegiveis_a_promocao_individual`.
+- **CA09 — Sem duplicidade:** uma unidade não pode ser reservada por dois combos nem receber simultaneamente desconto de combo e individual; validar pelos testes de interação de combos.
+- **CA10 — Produto por peso:** produtos `KILO` não podem integrar combos; validar com `test_produtos_vendidos_por_peso_nao_participam_de_combos`.
+- **CA11 — Percentual inválido:** percentuais menores/iguais a zero, acima de 100 ou não numéricos devem ser rejeitados; validar com `test_rejeita_percentuais_de_desconto_invalidos`.
+- **CA12 — Recibo:** o recibo deve exibir itens, descontos e total; validar com os testes de `TestReciboImpresso` e o teste de recibo de combo.
+- **CA13 — Regressão:** a suíte completa deve passar; a evidência final atual registra 61 testes aprovados.
