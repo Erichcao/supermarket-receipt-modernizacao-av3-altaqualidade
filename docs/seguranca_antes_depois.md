@@ -65,7 +65,7 @@ pytest-approvaltests==0.2.4
 
 ### pip-audit
 
-- Versão registrada no ambiente de auditoria: 2.10.2.
+- Versão registrada no ambiente de auditoria: 2.10.1.
 - Comando: `pip-audit -r requirements.txt -f columns`.
 - Resultado: `No known vulnerabilities found`.
 - Observação: a saída contém um aviso do módulo `venv` sobre o caminho da pasta temporária no Windows (nome curto e nome completo do mesmo diretório). O aviso não afeta o resultado.
@@ -134,4 +134,4 @@ safety scan --target . --save-as json evidencias\safety_final.json
 O Safety exige uma conta gratuita na primeira execução.
 
 
-**Nota sobre versões:** as versões do Bandit (1.9.4) e do pip-audit (2.10.2) correspondem às versões registradas no ambiente de auditoria utilizado pelo grupo. Os arquivos de saída dessas duas ferramentas não imprimem a versão no próprio relatório; por isso, a identificação depende do registro do ambiente, não de uma linha do log.
+**Nota sobre versões:** as versões do Bandit (1.9.4) e do pip-audit (2.10.1) correspondem às versões registradas no ambiente de auditoria utilizado pelo grupo. Os arquivos de saída dessas duas ferramentas não imprimem a versão no próprio relatório; por isso, a identificação depende do registro do ambiente, não de uma linha do log.
