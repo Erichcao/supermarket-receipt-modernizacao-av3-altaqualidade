@@ -75,10 +75,6 @@ class ShoppingCart:
             # Recupera somente a quantidade que não foi utilizada em combos.
             quantity = available_quantities[product]
 
-            # Ignora produtos sem unidades disponíveis para outras promoções.
-            if quantity <= 0:
-                continue
-
             # Verifica se existe uma promoção individual cadastrada.
             if product in offers.keys():
 
