@@ -70,8 +70,8 @@ Resultados da validação final:
 - 47 casos de caracterização na suíte final, além do teste original. A evidência histórica do código original registra 1 teste executado; os 47 casos não são apresentados como execução pré-refatoração.
 - 20 casos específicos para os descontos por combos.
 - 1 teste para validar a rejeição de tipos de promoção não suportados pela fábrica.
-- **69 testes aprovados** na execução completa da suíte.
-- **99% de cobertura de código**, com 210 das 213 instruções executadas.
+- **69 testes previstos na suíte atual** após as novas coberturas; a execução e a atualização do log final ainda precisam ser feitas localmente.
+- A última medição disponível antes destas alterações foi de 99% (210 de 213 instruções), registrada para a versão anterior da suíte; a cobertura deve ser recalculada após a execução atual.
 
 As instruções não cobertas correspondem a proteções de acesso ao banco de dados utilizadas no catálogo e à declaração do método abstrato da estratégia de promoção.
 
@@ -250,6 +250,8 @@ Os detalhes técnicos e os registros do projeto estão organizados nos seguintes
 - `docs/plano_contingencia.md`: planejamento de contingência.
 - `docs/padroes_projeto.md`: justificativa e aplicação dos padrões de projeto.
 - `docs/seguranca_antes_depois.md`: comparação das auditorias de segurança.
+- `docs/matriz_rastreabilidade.md`: relação entre requisitos, implementação, testes e evidências.
+- `docs/licoes_aprendidas.md`: decisões, limitações e aprendizados da modernização.
 - `docs/matriz_rastreabilidade.md`: relação entre requisitos, implementação, testes e evidências.
 - `docs/licoes_aprendidas.md`: decisões, limitações e aprendizados da modernização.
 - `GUIA_CONTINUIDADE.md`: orientações para continuidade do desenvolvimento.
