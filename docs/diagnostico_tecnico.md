@@ -281,9 +281,9 @@ As constatações foram elaboradas a partir da análise dos seguintes arquivos:
 - `tests/fake_catalog.py`;
 - `tests/receipt_printer.py`.
 
-Também foram considerados os resultados da execução dos testes automatizados disponíveis naquela etapa, que totalizavam 46 testes aprovados: um teste original e 45 testes de caracterização.
+Também foram considerados os resultados da execução dos testes automatizados disponíveis naquela etapa, que incluíam um teste original e 45 casos de caracterização na suíte elaborada; somente o teste original está comprovado pelo log histórico.
 
-As constatações representam o comportamento observado antes da refatoração. Portanto, este documento não deve ser interpretado como uma descrição integral da arquitetura final do sistema.
+As constatações representam a análise do código legado. A evidência histórica disponível, em evidencias/testes_originais.txt, registra um teste aprovado no código original. Os 45 casos de caracterização foram adicionados à suíte do projeto, mas não há log que comprove sua execução antes da refatoração. Portanto, não atribuímos a esses casos uma aprovação pré-refatoração sem evidência.
 
 As alterações implementadas, os resultados dos testes de regressão e as auditorias posteriores estão registrados nos documentos e nas evidências correspondentes.
 
@@ -299,13 +299,13 @@ Durante a modernização, foram aplicadas as seguintes melhorias:
 - Definição da política de exclusividade por unidade para evitar descontos duplicados.
 - Ampliação da suíte de testes para validar o comportamento legado e as novas funcionalidades.
 
-A suíte completa passou a contar com **61 testes automatizados aprovados**, distribuídos entre:
+A suíte atual passou a contar com **69 testes automatizados previstos**, cuja execução após as últimas alterações ainda deve ser registrada, distribuídos entre:
 
 - 1 teste original;
-- 45 testes de caracterização do comportamento legado;
-- 14 testes específicos para os descontos por combos;
+- 47 casos de caracterização do comportamento legado;
+- 20 casos específicos para os descontos por combos;
 - 1 teste para validar a rejeição de tipos de promoção não suportados pela fábrica.
 
-Os resultados da execução final estão registrados em `evidencias/testes_final.txt`.
+O log existente em `evidencias/testes_final.txt` registra a execução anterior, com 61 testes. Ele deve ser atualizado após a execução da suíte ampliada.
 
 As decisões de arquitetura estão detalhadas em `docs/padroes_projeto.md`, enquanto os resultados das auditorias estão documentados em `docs/seguranca_antes_depois.md` e na pasta `evidencias/`.
