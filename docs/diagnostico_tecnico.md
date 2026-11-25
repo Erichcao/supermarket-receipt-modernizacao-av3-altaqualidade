@@ -144,12 +144,14 @@ Esse teste configura uma oferta de 10% para escovas de dentes, mas adiciona maç
 
 Para ampliar a proteção do comportamento legado, o grupo desenvolveu o arquivo `test_legacy_behavior.py`, contendo testes de caracterização organizados por categorias.
 
-A suíte atual possui 46 testes automatizados:
+A suíte final possui 61 testes automatizados, conforme `evidencias/testes_final.txt`:
 
-- 1 teste original em `test_supermarket.py`;
-- 45 testes de caracterização em `test_legacy_behavior.py`.
+- 1 teste em `test_supermarket.py`;
+- 45 casos de caracterização em `test_legacy_behavior.py`;
+- 14 casos específicos de combos em `test_bundle_discount.py` (incluindo parametrizações);
+- 1 teste de rejeição de tipo não suportado em `test_promotion_factory.py`.
 
-A execução de `python -m pytest -v` apresentou 46 testes aprovados.
+A evidência histórica `evidencias/testes_originais.txt` registra somente 1 teste aprovado no código original. Portanto, não afirmamos que os 45 casos de caracterização foram executados antes da refatoração. Eles documentam comportamentos do legado e integram a suíte final de regressão.
 
 Os novos testes contemplam cenários de carrinho vazio, inclusão de produtos, cálculo de valores, promoções existentes, interação entre ofertas, contratos da API pública e impressão do recibo.
 
@@ -292,7 +294,7 @@ As recomendações deste diagnóstico orientaram as etapas seguintes do projeto.
 Durante a modernização, foram aplicadas as seguintes melhorias:
 
 - Separação das estratégias de promoção utilizando o padrão Strategy.
-- Centralização da criação das estratégias por meio do padrão Factory Method.
+- Centralização da criação das estratégias por meio do padrão Simple Factory.
 - Implementação dos descontos de 10% para combos de produtos.
 - Definição da política de exclusividade por unidade para evitar descontos duplicados.
 - Ampliação da suíte de testes para validar o comportamento legado e as novas funcionalidades.
