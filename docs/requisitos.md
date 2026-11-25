@@ -76,7 +76,7 @@ O projeto deve possuir documentação sobre sua estrutura, requisitos, decisões
 - RNF02: uma nova estratégia individual deve poder ser adicionada como classe própria, com registro correspondente na `PromotionFactory`; a limitação do mapeamento deve permanecer documentada.
 - RNF03: os cálculos de promoções devem ser executáveis por estratégias isoladas e cobertos por testes específicos.
 - RNF04: os cenários de comportamento legado cobertos em `tests/test_legacy_behavior.py` devem continuar aprovados após alterações.
-- RNF05: `python -m pytest -v` deve concluir com todos os testes aprovados; a execução final registrada contém 61 testes.
+- RNF05: `python -m pytest -v` deve concluir com todos os testes aprovados; a suíte ampliada deve conter 69 testes; a execução atualizada ainda precisa ser registrada.
 - RNF06: os valores de descontos e totais devem ser verificados por asserts numéricos, usando tolerância para cálculos de ponto flutuante.
 - RNF07: Bandit, pip-audit e Safety devem ser executados sobre os escopos documentados, com versões, comandos e resultados registrados.
 - RNF08: cada requisito funcional deve apontar para implementação, teste e evidência na rastreabilidade do projeto.
@@ -125,4 +125,4 @@ O projeto deve possuir documentação sobre sua estrutura, requisitos, decisões
 - **CA10 — Produto por peso:** produtos `KILO` não podem integrar combos; validar com `test_produtos_vendidos_por_peso_nao_participam_de_combos`.
 - **CA11 — Percentual inválido:** percentuais menores/iguais a zero, acima de 100 ou não numéricos devem ser rejeitados; validar com `test_rejeita_percentuais_de_desconto_invalidos`.
 - **CA12 — Recibo:** o recibo deve exibir itens, descontos e total; validar com os testes de `TestReciboImpresso` e o teste de recibo de combo.
-- **CA13 — Regressão:** a suíte completa deve passar; a evidência final atual registra 61 testes aprovados.
+- **CA13 — Regressão:** a suíte completa deve passar; a suíte ampliada deve registrar 69 testes aprovados após a execução local.
