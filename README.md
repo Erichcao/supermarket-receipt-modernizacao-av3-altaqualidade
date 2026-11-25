@@ -65,17 +65,17 @@ As implementações estão organizadas no diretório `src/promotions/`.
 
 Foram desenvolvidos testes para preservar o comportamento legado e validar as novas funcionalidades e estruturas de modernização.
 
+
 Resultados da validação final:
 
-- 47 casos de caracterização na suíte final, além do teste original. A evidência histórica do código original registra 1 teste executado; os 47 casos não são apresentados como execução pré-refatoração.
-- 20 casos específicos para os descontos por combos.
+- 47 testes de caracterização e regressão do comportamento legado.
+- 21 testes específicos para os descontos por combos.
 - 1 teste para validar a rejeição de tipos de promoção não suportados pela fábrica.
-- **69 testes previstos na suíte atual** após as novas coberturas; a execução e a atualização do log final ainda precisam ser feitas localmente.
-- A última medição disponível antes destas alterações foi de 99% (210 de 213 instruções), registrada para a versão anterior da suíte; a cobertura deve ser recalculada após a execução atual.
+- 1 teste de integração do checkout com produto vendido por peso.
+- **70 testes automatizados aprovados**, conforme registrado em `evidencias/testes_final.txt`.
+- **99% de cobertura do código de produção**, considerando 213 instruções, das quais 210 foram executadas. As 3 instruções não cobertas pertencem às proteções de acesso ao banco de dados do catálogo e à declaração do método abstrato da estratégia de promoção.
 
-As instruções não cobertas correspondem a proteções de acesso ao banco de dados utilizadas no catálogo e à declaração do método abstrato da estratégia de promoção.
-
-A cobertura foi calculada considerando os arquivos do diretório src/, conforme registrado em evidencias/cobertura_final.txt.
+A cobertura foi calculada considerando exclusivamente os arquivos do diretório `src/`, conforme registrado em `evidencias/cobertura_final.txt`.
 
 Para executar os testes:
 
@@ -86,11 +86,12 @@ python -m pytest -v
 Para verificar a cobertura:
 
 ```bash
-python -m coverage run -m pytest
+python -m coverage erase
+python -m coverage run --source=src -m pytest
 python -m coverage report -m
 ```
 
-O relatório de cobertura está disponível em `evidencias/cobertura_testes.txt`.
+O relatório atualizado de cobertura está disponível em `evidencias/cobertura_final.txt`.
 
 ## 5. Auditorias de segurança
 
@@ -133,7 +134,6 @@ supermarket-receipt-modernizacao-av3-altaqualidade/
 │   ├── bandit_depois.txt
 │   ├── bandit_final.txt
 │   ├── cobertura_final.txt
-│   ├── cobertura_testes.txt
 │   ├── pip_audit_antes.txt
 │   ├── pip_audit_depois.txt
 │   ├── pip_audit_final.txt
@@ -258,9 +258,7 @@ Os detalhes técnicos e os registros do projeto estão organizados nos seguintes
 
 ## 11. Situação do projeto
 
-A caracterização do comportamento legado, a refatoração, a implementação dos descontos por combos, os testes de regressão e as auditorias de segurança foram concluídos.
-
-A última validação registrada antes das ampliações documentais e de testes continha 61 testes aprovados e 99% de cobertura. A suíte atual prevê 69 testes; a nova execução e a atualização da evidência de cobertura ainda precisam ser realizadas localmente. As auditorias finais disponíveis registraram ausência de vulnerabilidades conhecidas nos escopos analisados.
+A caracterização do comportamento legado, a refatoração, a implementação dos descontos por combos, os testes de regressão e as auditorias de segurança foram concluídos. A suíte final contém 70 testes automatizados aprovados, com 99% de cobertura do código de produção. As três instruções não cobertas correspondem a métodos de acesso ao banco de dados não utilizados nos testes unitários e à declaração de um método abstrato. As auditorias finais disponíveis registraram ausência de vulnerabilidades conhecidas nos escopos analisados.
 
 ---
 

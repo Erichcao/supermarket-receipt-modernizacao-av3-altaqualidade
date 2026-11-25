@@ -10,7 +10,7 @@ A modernização foi conduzida de forma incremental sobre um sistema legado de c
 - **Separação por responsabilidade:** encapsular cálculos individuais em estratégias e centralizar sua instanciação tornou as regras promocionais mais localizadas. A Simple Factory ainda exige atualizar seu mapeamento quando uma nova estratégia individual é criada.
 - **Combos exigem controle de unidades:** reservar as quantidades utilizadas impede que a mesma unidade receba descontos incompatíveis. As unidades excedentes podem continuar participando das promoções individuais.
 - **Decisões de prioridade precisam ser explícitas:** os combos são processados antes das ofertas individuais; combos sobrepostos seguem a ordem de cadastro. A implementação não busca automaticamente a maior economia para o cliente.
-- **Cobertura não é sinônimo de qualidade absoluta:** a cobertura final de aproximadamente 99% demonstra execução ampla dos caminhos medidos, mas não substitui revisão, testes de aceitação ou análise de regras de negócio.
+- **Cobertura não é sinônimo de qualidade absoluta:** a cobertura final foi de 99% (210 de 213 instruções do código de produção em `src/`). As três instruções não cobertas correspondem a duas proteções de acesso ao banco de dados em `catalog.py` e à declaração do método abstrato `PromotionStrategy.calculate`. Esse resultado demonstra ampla execução dos caminhos medidos, mas não substitui revisão, testes de aceitação ou análise de regras de negócio.
 - **Auditorias têm escopo limitado:** Bandit, pip-audit e Safety não substituem revisão manual nem garantem ausência total de vulnerabilidades. Os resultados refletem os ambientes, versões, bases e escopos registrados.
 
 ## Limitações e decisões

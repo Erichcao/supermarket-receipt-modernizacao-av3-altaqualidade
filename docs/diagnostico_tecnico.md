@@ -144,12 +144,12 @@ Esse teste configura uma oferta de 10% para escovas de dentes, mas adiciona maç
 
 Para ampliar a proteção do comportamento legado, o grupo desenvolveu o arquivo `test_legacy_behavior.py`, contendo testes de caracterização organizados por categorias.
 
-A suíte ampliada possui 69 testes automatizados previstos. O log `evidencias/testes_final.txt` ainda registra a execução anterior, com 61 testes:
+A suíte final possui 70 testes automatizados aprovados, conforme registrado em `evidencias/testes_final.txt`:
 
-- 1 teste em `test_supermarket.py`;
-- 47 casos de caracterização na suíte final em `test_legacy_behavior.py`;
-- 14 casos específicos de combos em `test_bundle_discount.py` (incluindo parametrizações);
-- 1 teste de rejeição de tipo não suportado em `test_promotion_factory.py`.
+- 47 testes de caracterização e regressão em `test_legacy_behavior.py`;
+- 21 testes específicos de combos em `test_bundle_discount.py`, incluindo parametrizações;
+- 1 teste de rejeição de tipo não suportado em `test_promotion_factory.py`;
+- 1 teste de integração em `test_supermarket.py`.
 
 A evidência histórica `evidencias/testes_originais.txt` registra somente 1 teste aprovado no código original. Portanto, não afirmamos que os 47 casos de caracterização foram executados antes da refatoração. Eles documentam comportamentos do legado e integram a suíte final de regressão.
 
@@ -299,13 +299,15 @@ Durante a modernização, foram aplicadas as seguintes melhorias:
 - Definição da política de exclusividade por unidade para evitar descontos duplicados.
 - Ampliação da suíte de testes para validar o comportamento legado e as novas funcionalidades.
 
-A suíte atual passou a contar com **69 testes automatizados previstos**, cuja execução após as últimas alterações ainda deve ser registrada, distribuídos entre:
+A suíte final conta com **70 testes automatizados aprovados**, distribuídos entre:
 
-- 1 teste original;
-- 47 casos de caracterização do comportamento legado;
-- 20 casos específicos para os descontos por combos;
-- 1 teste para validar a rejeição de tipos de promoção não suportados pela fábrica.
+- 47 testes de caracterização e regressão do comportamento legado;
+- 21 testes específicos para os descontos por combos;
+- 1 teste para validar a rejeição de tipos de promoção não suportados pela fábrica;
+- 1 teste de integração do checkout com produto vendido por peso.
 
-O log existente em `evidencias/testes_final.txt` registra a execução anterior, com 61 testes. Ele deve ser atualizado após a execução da suíte ampliada.
+A execução está registrada em `evidencias/testes_final.txt`. A cobertura do código de produção, considerando exclusivamente o diretório `src/`, é de **99% (210 de 213 instruções)**, conforme registrado em `evidencias/cobertura_final.txt`.
+
+As três instruções não cobertas são duas exceções intencionais dos métodos de acesso ao banco de dados em `catalog.py` e a declaração abstrata de `PromotionStrategy.calculate`.
 
 As decisões de arquitetura estão detalhadas em `docs/padroes_projeto.md`, enquanto os resultados das auditorias estão documentados em `docs/seguranca_antes_depois.md` e na pasta `evidencias/`.

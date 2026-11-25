@@ -350,3 +350,40 @@ def test_combo_sobreposto_respeita_ordem_de_cadastro(
 
     assert len(receipt.discounts) == 1
     assert receipt.discounts[0].product.name == "Combo: toothbrush + toothpaste"
+
+def test_combo_que_consume_todas_as_unidades_nao_gera_desconto_individual(
+    teller, toothbrush, toothpaste
+):
+    # Cadastra um combo com desconto de 10%.
+    teller.add_bundle_offer([toothbrush, toothpaste], 10)
+
+    # Cadastra uma promoção individual de 20% para a escova.
+    teller.add_special_offer(
+        SpecialOfferType.TEN_PERCENT_DISCOUNT,
+        toothbrush,
+        20
+    )
+
+    # Compra exatamente uma escova e uma pasta.
+    # O combo consome todas as unidades dos dois produtos.
+    receipt = checkout(
+        teller,
+        (toothbrush, 1),
+        (toothpaste, 1)
+    )
+
+    # Somente o desconto do combo deve aparecer.
+    assert len(receipt.discounts) == 1
+    assert receipt.discounts[0].product.name == (
+        "Combo: toothbrush + toothpaste"
+    )
+
+    # O desconto deve ser de 10% sobre R$ 2,78.
+    assert receipt.discounts[0].discount_amount == pytest.approx(-0.278)
+
+    # O total não deve conter desconto individual adicional.
+    assert receipt.total_price() == pytest.approx(2.502)
+
+    # O recibo impresso não deve apresentar desconto de -0.00.
+    printed = ReceiptPrinter().print_receipt(receipt)
+    assert "-0.00" not in printed
