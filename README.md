@@ -260,7 +260,7 @@ Os detalhes técnicos e os registros do projeto estão organizados nos seguintes
 
 A caracterização do comportamento legado, a refatoração, a implementação dos descontos por combos, os testes de regressão e as auditorias de segurança foram concluídos.
 
-A validação final registrou 69 testes aprovados, 99% de cobertura do código de produção e ausência de vulnerabilidades conhecidas nas análises finais realizadas com Bandit, pip-audit e Safety.
+A última validação registrada antes das ampliações documentais e de testes continha 61 testes aprovados e 99% de cobertura. A suíte atual prevê 69 testes; a nova execução e a atualização da evidência de cobertura ainda precisam ser realizadas localmente. As auditorias finais disponíveis registraram ausência de vulnerabilidades conhecidas nos escopos analisados.
 
 ---
 
