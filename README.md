@@ -252,8 +252,6 @@ Os detalhes técnicos e os registros do projeto estão organizados nos seguintes
 - `docs/seguranca_antes_depois.md`: comparação das auditorias de segurança.
 - `docs/matriz_rastreabilidade.md`: relação entre requisitos, implementação, testes e evidências.
 - `docs/licoes_aprendidas.md`: decisões, limitações e aprendizados da modernização.
-- `docs/matriz_rastreabilidade.md`: relação entre requisitos, implementação, testes e evidências.
-- `docs/licoes_aprendidas.md`: decisões, limitações e aprendizados da modernização.
 - `GUIA_CONTINUIDADE.md`: orientações para continuidade do desenvolvimento.
 
 ## 11. Situação do projeto
