@@ -73,11 +73,14 @@ Os padrões estão documentados em `docs/padroes_projeto.md`.
 
 ## 5. Testes automatizados
 
-O projeto conta com 61 testes automatizados aprovados na validação registrada (execução com Python 3.14.7 e pytest 9.2.0):
+O projeto conta com **70 testes automatizados aprovados** na validação registrada (execução com Python 3.14.7 e pytest 9.2.0):
 
-- 46 testes relacionados ao comportamento legado: 45 de caracterização (`test_legacy_behavior.py`) e 1 teste original (`test_supermarket.py`).
-- 14 testes da promoção de combos (`test_bundle_discount.py`).
-- 1 teste da fábrica de promoções (`test_promotion_factory.py`).
+- **47 testes** relacionados ao comportamento legado (`test_legacy_behavior.py`).
+- **21 testes** relacionados à promoção de combos (`test_bundle_discount.py`).
+- **1 teste** da fábrica de promoções (`test_promotion_factory.py`).
+- **1 teste** do checkout KILO.
+
+**Total: 70 testes aprovados.**
 
 Comando utilizado:
 
