@@ -132,3 +132,29 @@ O registro deverá conter, quando aplicável:
 - Resultado da validação.
 
 Esse registro permitirá acompanhar a evolução do projeto e fornecer evidências das medidas adotadas para preservar a estabilidade do sistema.
+
+## 8. Ordem planejada das alterações
+
+A modernização incremental deve seguir esta sequência, mantendo um estado testável entre as etapas:
+
+1. Registrar o comportamento inicial e os contratos públicos existentes.
+2. Criar ou ampliar testes de caracterização para preços, promoções, recibos e interfaces.
+3. Refatorar as promoções individuais para estratégias e centralizar sua instanciação na `PromotionFactory`.
+4. Implementar `BundleOffer` e `BundleDiscountStrategy`, sem substituir as regras antigas.
+5. Integrar o processamento de combos ao checkout, reservando unidades e encaminhando excedentes às promoções individuais.
+6. Executar testes de combo completo, incompleto, múltiplos, excedentes, sobreposição e recibo.
+7. Executar a suíte completa de regressão e medir a cobertura.
+8. Repetir Bandit, pip-audit e Safety, comparar os resultados e registrar limitações.
+9. Atualizar documentação, evidências e README antes da integração final.
+
+## 9. Interfaces públicas a preservar
+
+As assinaturas abaixo foram conferidas no código da branch de integração e devem permanecer compatíveis:
+
+- `Teller.add_special_offer(self, offer_type, product, argument)` — cadastro de oferta individual.
+- `Teller.checks_out_articles_from(self, the_cart)` — fechamento da compra e geração do recibo.
+- `ShoppingCart.handle_offers(self, receipt, offers, catalog, bundle_offers=None)` — processamento de ofertas. Os três primeiros argumentos correspondem à interface histórica; `bundle_offers` é o parâmetro opcional acrescentado para os combos.
+- `ShoppingCart.add_item(self, product)` e `ShoppingCart.add_item_quantity(self, product, quantity)` — inclusão de produtos no carrinho.
+- `Teller.add_bundle_offer(self, products, discount_percentage)` — nova interface para cadastro de combos.
+
+Além das assinaturas, devem ser preservados os efeitos observáveis cobertos pelos testes: itens e descontos do recibo, total final, ordem de apresentação e substituição de uma oferta individual anterior quando outra é cadastrada para o mesmo produto.

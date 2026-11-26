@@ -34,6 +34,19 @@ A implementação dos combos segue a política de exclusividade por unidade:
 - Uma mesma unidade não pode ser utilizada em mais de um combo.
 - Produtos vendidos por peso não participam dos combos.
 
+### Exemplo de cadastro de combo
+
+Com os produtos já cadastrados no catálogo, um combo pode ser registrado no caixa da seguinte forma:
+
+```python
+teller.add_bundle_offer(
+    products=[toothbrush, toothpaste],
+    discount_percentage=10
+)
+```
+
+O desconto é calculado no fechamento da compra e aparece como desconto identificado no recibo.
+
 ## 3. Padrões de projeto aplicados
 
 Foram implementados dois padrões de projeto:
@@ -52,17 +65,17 @@ As implementações estão organizadas no diretório `src/promotions/`.
 
 Foram desenvolvidos testes para preservar o comportamento legado e validar as novas funcionalidades e estruturas de modernização.
 
+
 Resultados da validação final:
 
-- 45 testes de caracterização, além do teste original.
-- 14 testes específicos para os descontos por combos.
+- 47 testes de caracterização e regressão do comportamento legado.
+- 21 testes específicos para os descontos por combos.
 - 1 teste para validar a rejeição de tipos de promoção não suportados pela fábrica.
-- **61 testes aprovados** na execução completa da suíte.
-- **99% de cobertura de código**, com 210 das 213 instruções executadas.
+- 1 teste de integração do checkout com produto vendido por peso.
+- **70 testes automatizados aprovados**, conforme registrado em `evidencias/testes_final.txt`.
+- **99% de cobertura do código de produção**, considerando 213 instruções, das quais 210 foram executadas. As 3 instruções não cobertas pertencem às proteções de acesso ao banco de dados do catálogo e à declaração do método abstrato da estratégia de promoção.
 
-As instruções não cobertas correspondem a proteções de acesso ao banco de dados utilizadas no catálogo e à declaração do método abstrato da estratégia de promoção.
-
-A cobertura foi calculada considerando os arquivos do diretório src/, conforme registrado em evidencias/cobertura_final.txt.
+A cobertura foi calculada considerando exclusivamente os arquivos do diretório `src/`, conforme registrado em `evidencias/cobertura_final.txt`.
 
 Para executar os testes:
 
@@ -73,11 +86,12 @@ python -m pytest -v
 Para verificar a cobertura:
 
 ```bash
-python -m coverage run -m pytest
+python -m coverage erase
+python -m coverage run --source=src -m pytest
 python -m coverage report -m
 ```
 
-O relatório de cobertura está disponível em `evidencias/cobertura_testes.txt`.
+O relatório atualizado de cobertura está disponível em `evidencias/cobertura_final.txt`.
 
 ## 5. Auditorias de segurança
 
@@ -120,7 +134,6 @@ supermarket-receipt-modernizacao-av3-altaqualidade/
 │   ├── bandit_depois.txt
 │   ├── bandit_final.txt
 │   ├── cobertura_final.txt
-│   ├── cobertura_testes.txt
 │   ├── pip_audit_antes.txt
 │   ├── pip_audit_depois.txt
 │   ├── pip_audit_final.txt
@@ -237,13 +250,15 @@ Os detalhes técnicos e os registros do projeto estão organizados nos seguintes
 - `docs/plano_contingencia.md`: planejamento de contingência.
 - `docs/padroes_projeto.md`: justificativa e aplicação dos padrões de projeto.
 - `docs/seguranca_antes_depois.md`: comparação das auditorias de segurança.
+- `docs/matriz_rastreabilidade.md`: relação entre requisitos, implementação, testes e evidências.
+- `docs/licoes_aprendidas.md`: decisões, limitações e aprendizados da modernização.
+- `docs/matriz_rastreabilidade.md`: relação entre requisitos, implementação, testes e evidências.
+- `docs/licoes_aprendidas.md`: decisões, limitações e aprendizados da modernização.
 - `GUIA_CONTINUIDADE.md`: orientações para continuidade do desenvolvimento.
 
 ## 11. Situação do projeto
 
-A caracterização do comportamento legado, a refatoração, a implementação dos descontos por combos, os testes de regressão e as auditorias de segurança foram concluídos.
-
-A validação final registrou 61 testes aprovados, 99% de cobertura do código de produção e ausência de vulnerabilidades conhecidas nas análises finais realizadas com Bandit, pip-audit e Safety.
+A caracterização do comportamento legado, a refatoração, a implementação dos descontos por combos, os testes de regressão e as auditorias de segurança foram concluídos. A suíte final contém 70 testes automatizados aprovados, com 99% de cobertura do código de produção. As três instruções não cobertas correspondem a métodos de acesso ao banco de dados não utilizados nos testes unitários e à declaração de um método abstrato. As auditorias finais disponíveis registraram ausência de vulnerabilidades conhecidas nos escopos analisados.
 
 ---
 

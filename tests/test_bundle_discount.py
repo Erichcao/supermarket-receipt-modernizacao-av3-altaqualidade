@@ -6,6 +6,7 @@ from model_objects import Product, ProductUnit, SpecialOfferType
 from shopping_cart import ShoppingCart
 from teller import Teller
 from tests.fake_catalog import FakeCatalog
+from tests.receipt_printer import ReceiptPrinter
 
 
 # Cria os produtos utilizados nos testes.
@@ -283,3 +284,106 @@ class TestBundleDiscount:
         # Uma oferta vazia não deve gerar desconto.
         assert receipt.discounts == []
         assert receipt.total_price() == 0
+
+
+@pytest.mark.parametrize(
+    "offer_type, argument, toothbrush_quantity, expected_discount",
+    [
+        (SpecialOfferType.TEN_PERCENT_DISCOUNT, 10, 2, -0.099),
+        (SpecialOfferType.THREE_FOR_TWO, None, 4, -0.99),
+        (SpecialOfferType.TWO_FOR_AMOUNT, 1.50, 3, -0.48),
+        (SpecialOfferType.FIVE_FOR_AMOUNT, 4.00, 6, -0.95),
+    ],
+)
+def test_combo_preserva_promocoes_individuais_nas_unidades_excedentes(
+    teller, toothbrush, toothpaste,
+    offer_type, argument, toothbrush_quantity, expected_discount
+):
+    teller.add_bundle_offer([toothbrush, toothpaste], 10)
+    teller.add_special_offer(offer_type, toothbrush, argument)
+
+    receipt = checkout(
+        teller,
+        (toothbrush, toothbrush_quantity),
+        (toothpaste, 1)
+    )
+
+    # O combo reserva uma escova; a oferta individual atua somente no excedente.
+    assert sorted(
+        discount.discount_amount for discount in receipt.discounts
+    ) == pytest.approx(sorted([-0.278, expected_discount]))
+
+
+def test_combo_e_desconto_aparecem_no_recibo_impresso(
+    teller, toothbrush, toothpaste
+):
+    teller.add_bundle_offer([toothbrush, toothpaste], 10)
+    receipt = checkout(
+        teller,
+        (toothbrush, 1),
+        (toothpaste, 1)
+    )
+
+    printed = ReceiptPrinter().print_receipt(receipt)
+
+    assert "10% off combo (Combo: toothbrush + toothpaste)" in printed
+    assert "-0.28" in printed
+    assert "Total:" in printed
+
+
+def test_combo_sobreposto_respeita_ordem_de_cadastro(
+    teller, toothbrush, toothpaste
+):
+    mouthwash = Product("mouthwash", ProductUnit.EACH)
+    teller.catalog.add_product(mouthwash, 2.00)
+
+    # O primeiro combo reserva a escova; o segundo não pode reutilizá-la.
+    teller.add_bundle_offer([toothbrush, toothpaste], 10)
+    teller.add_bundle_offer([toothbrush, mouthwash], 10)
+
+    receipt = checkout(
+        teller,
+        (toothbrush, 1),
+        (toothpaste, 1),
+        (mouthwash, 1)
+    )
+
+    assert len(receipt.discounts) == 1
+    assert receipt.discounts[0].product.name == "Combo: toothbrush + toothpaste"
+
+def test_combo_que_consume_todas_as_unidades_nao_gera_desconto_individual(
+    teller, toothbrush, toothpaste
+):
+    # Cadastra um combo com desconto de 10%.
+    teller.add_bundle_offer([toothbrush, toothpaste], 10)
+
+    # Cadastra uma promoção individual de 20% para a escova.
+    teller.add_special_offer(
+        SpecialOfferType.TEN_PERCENT_DISCOUNT,
+        toothbrush,
+        20
+    )
+
+    # Compra exatamente uma escova e uma pasta.
+    # O combo consome todas as unidades dos dois produtos.
+    receipt = checkout(
+        teller,
+        (toothbrush, 1),
+        (toothpaste, 1)
+    )
+
+    # Somente o desconto do combo deve aparecer.
+    assert len(receipt.discounts) == 1
+    assert receipt.discounts[0].product.name == (
+        "Combo: toothbrush + toothpaste"
+    )
+
+    # O desconto deve ser de 10% sobre R$ 2,78.
+    assert receipt.discounts[0].discount_amount == pytest.approx(-0.278)
+
+    # O total não deve conter desconto individual adicional.
+    assert receipt.total_price() == pytest.approx(2.502)
+
+    # O recibo impresso não deve apresentar desconto de -0.00.
+    printed = ReceiptPrinter().print_receipt(receipt)
+    assert "-0.00" not in printed
