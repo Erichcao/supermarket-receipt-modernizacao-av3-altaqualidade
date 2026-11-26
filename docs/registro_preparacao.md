@@ -32,7 +32,7 @@ Foram criadas as seguintes pastas:
 
 - `docs/`: documentação técnica e registros do projeto.
 - `evidencias/`: resultados de testes, ambiente e auditorias.
-- `apresentacao/`: materiais para a apresentação final.
+- `apresentacao/`: pasta prevista inicialmente para organizar os materiais da apresentação final.
 
 Também foram criados arquivos iniciais para diagnóstico, requisitos, plano de contingência, padrões de projeto, segurança e continuidade do trabalho.
 
@@ -73,12 +73,12 @@ Após a preparação inicial, o projeto avançou pelas seguintes etapas:
 4. Elaboração do plano de contingência.
 5. Criação de testes de caracterização para preservar o comportamento legado.
 6. Execução e documentação das auditorias iniciais de segurança.
-7. Refatoração das promoções utilizando os padrões Strategy e Factory Method.
+7. Refatoração das promoções utilizando os padrões Strategy e Simple Factory.
 8. Implementação da promoção de combos com desconto de 10% e regra de exclusividade por unidade.
 9. Criação de testes automatizados para validar as funcionalidades originais e as novas regras.
 10. Execução das auditorias finais e comparação dos resultados.
 11. Atualização da documentação técnica e das evidências do projeto.
 
-Ao final da implementação, a suíte automatizada passou a contar com 59 testes aprovados, abrangendo os comportamentos caracterizados e as novas funcionalidades.
+Ao final da implementação, a suíte automatizada passou a contar com 61 testes aprovados, abrangendo os comportamentos caracterizados e as novas funcionalidades.
 
 Os resultados detalhados das etapas estão registrados nos documentos técnicos e nos arquivos da pasta `evidencias/`.
